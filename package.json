@@ -1,0 +1,25 @@
+{
+  "name": "wecom-bot-framework",
+  "version": "0.1.0",
+  "private": true,
+  "description": "企业微信智能机器人应用框架",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "test": "npm run test --workspaces --if-present",
+    "dev": "ts-node packages/server/src/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/ws": "^8.18.1",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "ws": "^8.21.0"
+  }
+}
