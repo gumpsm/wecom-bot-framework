@@ -42,7 +42,7 @@
 - [ ] 等待 `project-status-report` 组合 Skill 开发完成
 - [ ] 编写 agent.md
 - [ ] 配置 config.json skills 列表
-- [ ] 本地 test-bot 验证 5 个场景
+- [ ] 本地 pa-bot 验证 5 个场景
 - [ ] 获取正式 Bot 凭据 → 部署
 
 ## 依赖

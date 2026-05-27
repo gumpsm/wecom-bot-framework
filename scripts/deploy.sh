@@ -37,7 +37,7 @@ echo ""
 echo "===== Step 4: 配置 Bot 环境变量 ====="
 cd ~/wecom-bot-framework
 echo "请确保已创建以下文件（参考 .env.example）："
-echo "  bots/test-bot/.env"
+echo "  bots/pa-bot/.env"
 echo "  bots/project-bot/.env"
 echo "  bots/party-bot/.env"
 

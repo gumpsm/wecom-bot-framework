@@ -80,7 +80,7 @@ function loadLLMProviders(env: Record<string, string>): Record<string, LLMClient
 // ============================================
 
 function botNameToEnvPrefix(botName: string): string {
-  // test-bot → TEST_BOT, party-bot → PARTY_BOT
+  // pa-bot → PA_BOT, party-bot → PARTY_BOT
   return botName.toUpperCase().replace(/-/g, \"_\");
 }
 

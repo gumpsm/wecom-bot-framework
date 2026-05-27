@@ -60,7 +60,7 @@ export async function xxx(input: XxxInput, deps: CompositeSkillDeps): Promise<Xx
 - [ ] SkillDefinition 的 description 写清触发条件
 - [ ] 参数校验（必填字段检查）
 - [ ] 错误回滚
-- [ ] 本地 test-bot 验证至少 1 个完整场景
+- [ ] 本地 pa-bot 验证至少 1 个完整场景
 
 ### 需要新的原子 Skill
 → 找 PA（架构师）。PM 不自己新增原子 Skill。

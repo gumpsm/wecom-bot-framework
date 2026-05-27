@@ -34,7 +34,7 @@
 - [ ] 等待 `party-news-draft`、`party-plan-draft` 组合 Skill 开发完成
 - [ ] 编写 agent.md（参考 _template/AGENTS.md 规范）
 - [ ] 配置 config.json skills 列表
-- [ ] 本地 test-bot 验证 4 个场景
+- [ ] 本地 pa-bot 验证 4 个场景
 - [ ] 获取正式 Bot 凭据 → 部署
 
 ## 依赖

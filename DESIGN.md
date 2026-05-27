@@ -54,7 +54,7 @@ I:\.codex_wecom\
 │   │   └── mcp-client.ts        # MCP JSON-RPC 客户端
 │   └── server/src/
 │       └── index.ts             # 启动入口
-├── bots/test-bot/
+├── bots/pa-bot/
 │   ├── config.json
 │   └── agent.md
 ├── scripts/
@@ -381,7 +381,7 @@ scripts/tests/AGENTS.md        ← 测试负责人边界
 
 | Bot | 目录 | 定位 | Skills |
 |-----|------|------|--------|
-| test-bot | ots/test-bot/ | 基础测试 | 无（纯 Agent 对话） |
+| pa-bot | ots/pa-bot/ | 基础测试 | 无（纯 Agent 对话） |
 | project-bot | ots/project-bot/ | 项目管理 | 会议+日程+待办+周报+纪要 |
 | party-bot | ots/party-bot/ | 党建助手 | 文档+投票+周报+活动 |
 
@@ -409,7 +409,7 @@ scripts/tests/AGENTS.md        ← 测试负责人边界
 ├── Bot管理: BotManager (多bot生命周期, MCP启用, EventRouter)
 ├── LLM客户端: multi-key轮换, SSE流式, OpenAI兼容
 ├── Agent引擎: 意图识别 + Skill调度 + 槽位填充
-├── Bot示例: test-bot, project-bot, party-bot
+├── Bot示例: pa-bot, project-bot, party-bot
 └── 角色体系: 6个AGENTS.md + 1个STANDARDS.md
 `
 
@@ -431,7 +431,7 @@ scripts/tests/AGENTS.md        ← 测试负责人边界
 腾讯云轻量服务器 (Ubuntu 24.04, 3.6GB RAM)
 ├── Docker Engine 29.5.2
 ├── docker-compose v5.1.4
-├── wecom-bot-test (test-bot, 旧凭据)
+├── wecom-bot-test (pa-bot, 旧凭据)
 └── 待部署: bot-party, bot-project (需独立 Bot 凭据)
 ```
 
@@ -457,8 +457,8 @@ scripts/tests/AGENTS.md        ← 测试负责人边界
 
 ### 13.4 开发模式决策
 
-- **test-bot**: 本地开发专用，永远不在生产环境运行
-- **新 Bot 流程**: 需求讨论 → 方案确认 → 本地 test-bot 开发测试 → 人工验证 → 创建正式 Bot 凭据 → 云服务器部署
+- **pa-bot**: 本地开发专用，永远不在生产环境运行
+- **新 Bot 流程**: 需求讨论 → 方案确认 → 本地 pa-bot 开发测试 → 人工验证 → 创建正式 Bot 凭据 → 云服务器部署
 - **飞书 CLI**: 已调研（文档/智能表格能力更强），暂不引入（生态隔离，用户需额外账号）
 - **腾讯会议 API**: 待调研
 - 以上决策已写入 `STANDARDS.md` §二「开发流程规范」和 §九「待评估清单」

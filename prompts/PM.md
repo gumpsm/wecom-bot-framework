@@ -77,9 +77,9 @@
    - 已有组合 Skill 不够用 → 自己开发新的（在 `composite-skills/` 下）
    - 需要新的原子 Skill → 告诉我，我转交给 PA
 
-3. **本地测试**：使用 test-bot 验证
+3. **本地测试**：使用 pa-bot 验证
    - 启动本地服务：`npx tsx packages/server/src/index.ts`
-   - 在企业微信中与 test-bot 交互，验证至少 3 个场景：
+   - 在企业微信中与 pa-bot 交互，验证至少 3 个场景：
      - 闲聊场景（Bot 应自然回复）
      - 明确意图场景（Bot 应执行对应 Skill）
      - 模糊意图场景（Bot 应追问澄清）
@@ -121,7 +121,7 @@ export async function xxx(input: XxxInput, deps: CompositeSkillDeps): Promise<Xx
 }
 ```
 
-要求：Input/Output 类型完整、参数校验、错误回滚、本地 test-bot 验证。
+要求：Input/Output 类型完整、参数校验、错误回滚、本地 pa-bot 验证。
 
 ## Git 规范
 - 分支名：`ai/bot-pm/{BOT_NAME}-<task>`

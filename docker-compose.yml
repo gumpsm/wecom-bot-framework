@@ -25,13 +25,13 @@
     container_name: wecom-bot-test
     restart: unless-stopped
     environment:
-      - BOT_NAME=test-bot
+      - BOT_NAME=pa-bot
       - NODE_ENV=production
     env_file:
-      - ./bots/test-bot/.env
+      - ./bots/pa-bot/.env
     volumes:
-      - ./bots/test-bot/config.json:/app/bots/test-bot/config.json:ro
-      - ./bots/test-bot/agent.md:/app/bots/test-bot/agent.md:ro
+      - ./bots/pa-bot/config.json:/app/bots/pa-bot/config.json:ro
+      - ./bots/pa-bot/agent.md:/app/bots/pa-bot/agent.md:ro
       - ./logs:/app/logs
     logging:
       driver: "json-file"

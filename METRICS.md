@@ -8,7 +8,7 @@
 |------|------|------|---------|--------|
 | 原子 Skill | 42 | MCP 自动注册的 CLI 工具数 | 2026-05-26 | PA |
 | 组合 Skill | 5 | composite-skills/ 下手写的业务 Skill | 2026-05-26 | PM |
-| Bot 模板 | 3 | test-bot / party-bot / project-bot | 2026-05-27 | PM |
+| Bot 模板 | 3 | pa-bot / party-bot / project-bot | 2026-05-27 | PM |
 | 单元测试 | 17 | vitest 测试用例数 | 2026-05-26 | PA |
 | 集成测试 | 42 | 原子 Skill 逐一调用验证 | 2026-05-26 | PA |
 | 已部署 Bot | 1 | 云服务器上运行的容器数 | 2026-05-27 | PA |

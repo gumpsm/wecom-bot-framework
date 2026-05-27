@@ -47,7 +47,7 @@
 ```
 需求讨论阶段              开发测试阶段                部署验证阶段
 ┌──────────────┐        ┌──────────────┐          ┌──────────────┐
-│ 产品+技术讨论  │   →   │ test-bot 本地  │    →    │ 生产 Bot 云端  │
+│ 产品+技术讨论  │   →   │ pa-bot 本地  │    →    │ 生产 Bot 云端  │
 │ 需求→方案→确认 │        │ 开发+全量测试  │         │ 凭据→部署→验收 │
 └──────────────┘        └──────────────┘          └──────────────┘
   人工参与密集              尽量减少人工               人工验证效果
@@ -62,7 +62,7 @@
 - 输出：开发计划（Plan items）
 
 **开发测试阶段**（AI 为主，人工最小化）：
-- 使用 `test-bot` + 本地服务进行开发
+- 使用 `pa-bot` + 本地服务进行开发
 - 所有开发在本地完成测试闭环，不碰生产环境
 - 测试必须覆盖：单元测试 + 集成测试 + 场景测试
 - 人工仅在以下情况介入：提供新凭据/授权、验证交互效果、确认不确定性
@@ -72,12 +72,12 @@
 - 拿到凭据后部署到云服务器（Docker）
 - 人工发送消息验证生产环境效果
 
-### 2.3 test-bot 定位
+### 2.3 pa-bot 定位
 
-- `test-bot` 是**本地开发专用 Bot**，永远在本地环境运行
+- `pa-bot` 是**本地开发专用 Bot**，永远在本地环境运行
 - 不同阶段可使用不同凭据对接不同测试机器人
 - 开发通过后，生产 Bot 从 `bots/_template` 新建，使用独立凭据
-- test-bot 的代码、配置不部署到生产服务器
+- pa-bot 的代码、配置不部署到生产服务器
 
 ### 2.4 新增能力流程
 
@@ -95,13 +95,13 @@
 **新组合 Skill**：
 1. 在 `composite-skills/` 创建 `.ts` 文件
 2. 必须包含：Input 类型、Output 类型、参数校验、错误回滚
-3. 写场景测试验证 → 本地 test-bot 验证
+3. 写场景测试验证 → 本地 pa-bot 验证
 4. 更新 `composite-skills/AGENTS.md` 的能力清单
 
 **新 Bot**：
 1. `cp -r bots/_template bots/{name}`
 2. 编辑 `config.json`（选 skill）和 `agent.md`（写人设）
-3. 写 3 个验收场景 → 本地 test-bot 验证
+3. 写 3 个验收场景 → 本地 pa-bot 验证
 4. 验证通过 → 创建正式 Bot 凭据 → 服务器部署
 5. 更新 `bots/{name}/` 下文档
 
@@ -213,6 +213,14 @@ DESIGN.md：
 - 生产环境每个 Bot 使用独立 `.env` 文件（`bots/{name}/.env`）
 - 服务器端 `.env` 文件权限必须为 `600`
 
+### 7.1.1 凭据传递禁令（PO 铁律）
+
+- **任何人都不得将凭据（Bot ID、Secret、API Key、SSH Key）通过明文消息、提示词、文档传递给 AI 工具**
+- PO 提供凭据的唯一方式：直接写入本地 .env 文件（已在 .gitignore 中）
+- AI 开发者（PA/PM/PC）不得向用户索要凭据原文
+- 如果 AI 需要凭据但 .env 中未配置 → 报告用户自行填入 .env，不得要求用户明文提供
+- 违反此规则的 AI 行为应立即报告并停止
+
 ### 7.2 API Key 安全
 - LLM API Key 使用多 Key 轮换机制（`LLMClient` 内置），降低单 Key 泄露风险
 - 日志中禁止输出完整 API Key，仅输出前 8 位用于调试（`key.slice(0,8)+'...'`）
@@ -308,7 +316,7 @@ ROADMAP.md              ← 全局路线图（所有人必读）
   ├── framework/PLAN.md
   ├── composite-skills/PLAN.md
   ├── bots/PLAN.md      ← Bot 总览
-  │   ├── bots/test-bot/PLAN.md
+  │   ├── bots/pa-bot/PLAN.md
   │   ├── bots/party-bot/PLAN.md
   │   └── bots/project-bot/PLAN.md
   └── 各模块 AGENTS.md  → 引用对应的 PLAN.md
@@ -413,7 +421,7 @@ ROADMAP.md              ← 全局层：Phase 进度、角色分工
 |------|------|------|---------|
 | **PO** | 产品总监 | 提需求、验收效果、角色间协调 | 全部（决策权，不直接写代码） |
 | **PA** | 架构师 | framework、原子Skill配置、规范维护、**生产环境部署** | `packages/` `framework/` 服务器 |
-| **PM** | 项目经理 | Bot配置 + 组合Skill开发 + 本地test-bot测试 | `bots/{name}/` `composite-skills/` |
+| **PM** | 项目经理 | Bot配置 + 组合Skill开发 + 本地pa-bot测试 | `bots/{name}/` `composite-skills/` |
 | **PC** | 运营协调 | 日报/周报、宣传材料 | `docs/pc/`（只读其他目录） |
 
 ### 14.2 权限红线
@@ -426,7 +434,7 @@ ROADMAP.md              ← 全局层：Phase 进度、角色分工
 ### 14.3 多 PM 本地隔离
 
 - 每位 PM 在自己的 Session 中运行独立的 `packages/server` 实例
-- 使用独立的 test-bot 凭据（PO 提供）
+- 使用独立的 pa-bot 凭据（PO 提供）
 - 代码通过 Git 分支隔离，合入通过 PR
 
 ### 14.4 协作流程
@@ -435,7 +443,7 @@ ROADMAP.md              ← 全局层：Phase 进度、角色分工
 PO 提需求
   │
   ├──→ PM 开发 Bot 配置 + 组合 Skill
-  │       ├── 本地 test-bot 测试通过
+  │       ├── 本地 pa-bot 测试通过
   │       └── PO 验收 ──→ 通知 PA
   │
   ├──→ PA 维护框架 + 原子 Skill

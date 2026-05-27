@@ -33,7 +33,7 @@
 
 ## 开发规范
 - 每个组合 Skill 必须：Input/Output 类型定义 + 参数校验 + 错误回滚
-- 新增 Skill 后必须在本地 test-bot 验证至少 1 个完整场景
+- 新增 Skill 后必须在本地 pa-bot 验证至少 1 个完整场景
 - 变更后通知 bot PM 更新 skill 列表
 
 ---

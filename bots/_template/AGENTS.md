@@ -40,7 +40,7 @@ vim bots/my-bot/PLAN.md   # 场景、依赖、验收标准
 #    bots/my-bot/config.json  → 选 skill、配 LLM
 #    bots/my-bot/agent.md     → 写人设和行为规则
 
-# 5. 本地 test-bot 开发测试 → 全部通过
+# 5. 本地 pa-bot 开发测试 → 全部通过
 
 # 6. 通知 PA 部署到生产服务器
 ```
@@ -49,7 +49,7 @@ vim bots/my-bot/PLAN.md   # 场景、依赖、验收标准
 
 1. 在 `composite-skills/` 下创建 `.ts` 文件（参考现有 Skill 的模式）
 2. 必须包含：Input/Output 类型、SkillDefinition、执行函数、参数校验、错误回滚
-3. 在本地 test-bot 验证至少 1 个完整场景
+3. 在本地 pa-bot 验证至少 1 个完整场景
 4. 更新 `composite-skills/PLAN.md` 的状态
 5. 更新 Bot 的 `config.json` skills 列表
 
@@ -60,7 +60,7 @@ vim bots/my-bot/PLAN.md   # 场景、依赖、验收标准
 ## 多个 PM 同时工作时
 
 - 各自在独立 Session 中运行本地 server
-- 使用自己的 test-bot 凭据（互不干扰）
+- 使用自己的 pa-bot 凭据（互不干扰）
 - 代码通过 Git 分支隔离
 - 不直接修改其他 PM 的 Bot 目录
 
@@ -100,4 +100,4 @@ vim bots/my-bot/PLAN.md   # 场景、依赖、验收标准
 - [ ] config.json 的 skills 列表每一项都存在
 - [ ] agent.md 不超过 50 行
 - [ ] 至少定义 3 个 trigger-action 对
-- [ ] 本地 test-bot 验证过 3 个场景
+- [ ] 本地 pa-bot 验证过 3 个场景

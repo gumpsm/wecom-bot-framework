@@ -31,7 +31,7 @@
 |------|------|---------|---------|
 | framework | ✅ 稳定 | PA | [framework/PLAN.md](framework/PLAN.md) |
 | composite-skills | ✅ 5 个完成 | PM | [composite-skills/PLAN.md](composite-skills/PLAN.md) |
-| bot: test-bot | ✅ 本地测试用 | PM | [bots/test-bot/PLAN.md](bots/test-bot/PLAN.md) |
+| bot: pa-bot | ✅ 本地测试用 | PM | [bots/pa-bot/PLAN.md](bots/pa-bot/PLAN.md) |
 | bot: party-bot | 📋 待开发 | PM | [bots/party-bot/PLAN.md](bots/party-bot/PLAN.md) |
 | bot: project-bot | 📋 待开发 | PM | [bots/project-bot/PLAN.md](bots/project-bot/PLAN.md) |
 | 腾讯会议 API | 🔍 待调研 | PA | framework/PLAN.md |
@@ -44,7 +44,7 @@ PO 提需求
   │
   ├──→ PM 开发 Bot 配置 + 组合 Skill
   │       │
-  │       ├── 本地 test-bot 测试通过
+  │       ├── 本地 pa-bot 测试通过
   │       │
   │       └── 验收通过 ──→ 通知 PA 部署
   │
@@ -59,7 +59,7 @@ PO 提需求
 ## 多 PM 本地隔离
 
 - 每位 PM 在自己的 Session 中运行独立的本地 server 实例（`npx tsx packages/server/src/index.ts`）
-- 使用独立的 test-bot 凭据（PO 提供），互不冲突
+- 使用独立的 pa-bot 凭据（PO 提供），互不冲突
 - 代码修改通过 Git 分支隔离，合入时通过 PR
 - PM 之间不直接修改对方的 Bot 目录
 
