@@ -7,13 +7,19 @@
 
 ```bash
 # 1. 复制模板
-cp -r bots/_template bots/my-bot
+cp -r bots/_template bots/my-bot     # Linux/macOS
+# 或 Windows PowerShell:
+# Copy-Item -Recurse bots/_template bots/my-bot
 
-# 2. 编辑两个文件
+# 2. 配置凭据
+cp bots/my-bot/.env.example bots/my-bot/.env
+# 编辑 bots/my-bot/.env → 填入真实 Bot ID/Secret 和 LLM API Key
+
+# 3. 编辑 Bot 定义
 #    bots/my-bot/config.json  → 选 skill、配 LLM
 #    bots/my-bot/agent.md     → 写人设和行为规则
 
-# 3. 告诉测试负责人验收
+# 4. 交给运维部署（docker compose up -d）
 ```
 
 ## 你可以修改的文件
@@ -21,27 +27,27 @@ cp -r bots/_template bots/my-bot
 ```
 bots/{your-bot}/config.json   ← bot 配置（skill 列表、LLM 选择）
 bots/{your-bot}/agent.md      ← bot 人设 + 行为规则
+bots/{your-bot}/.env          ← 凭据（不提交 Git）
 ```
 
 ## 你不能修改的文件
 
 ```
-framework/                    ← 架构负责人的地盘
+packages/                     ← 框架核心代码
 composite-skills/             ← 找 Skill 编排者提需求，不自己改
+framework/                    ← 架构设计文档
 ```
 
 ## config.json 说明
 
 ```json
 {
-  "botId": "从环境变量 WECOM_BOT_ID 读取",
-  "botSecret": "从环境变量 WECOM_BOT_SECRET 读取",
   "systemPrompt": "简短的系统提示词（会被 agent.md 覆盖）",
   "skills": [
     "meeting.create_meeting",     // 原子 skill（品类.方法名）
     "schedule.create_schedule",   // 原子 skill
     "todo.create_todo",           // 原子 skill
-    "weekly-report"               // 组合 skill（来自 composite-skills/）
+    "create-weekly-report"        // 组合 skill（来自 composite-skills/）
   ],
   "llm": {
     "model": "deepseek-chat",
@@ -78,7 +84,8 @@ composite-skills/             ← 找 Skill 编排者提需求，不自己改
 
 ## 质量门禁
 
-- [ ] config.json 的 skills 列表每一项都存在于 framework/skills/ 或 composite-skills/
+- [ ] config.json 的 skills 列表每一项都存在于 composite-skills/ 或为有效原子 skill
+- [ ] .env 文件已创建且通过安全自检
 - [ ] agent.md 不超过 50 行（保持简洁）
 - [ ] 至少定义 3 个明确的 trigger-action 对
 - [ ] 用真实的企业微信 bot 测试过 3 个场景

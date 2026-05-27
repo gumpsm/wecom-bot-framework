@@ -1,20 +1,8 @@
 ﻿{
-  "systemPrompt": "你是一个智能助手。[一句话描述角色定位]",
-  "skills": [
-    "create-weekly-report",
-    "organize-meeting",
-    "meeting-minutes",
-    "party-vote",
-    "info-gathering",
-    "meeting.create_meeting",
-    "schedule.create_schedule",
-    "todo.create_todo",
-    "doc.create_doc",
-    "doc.edit_doc_content"
-  ],
+  "systemPrompt": "你是一个企业微信智能助手。请用简洁专业的语言回复。如果用户的问题不明确，请主动追问澄清。",
+  "skills": [],
   "llm": {
     "model": "deepseek-chat",
     "temperature": 0.7
-  },
-  "_comment": "skills 格式: 组合Skill用短横线命名(如 create-weekly-report), 原子Skill用品类.方法名(如 meeting.create_meeting)"
+  }
 }
