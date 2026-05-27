@@ -1,0 +1,80 @@
+﻿# ============================================
+# 企业微信智能机器人框架 — Docker Compose
+#
+# 使用方式：
+#   1. 为每个 Bot 创建 bots/<name>/.env（参考 .env.example）
+#   2. docker compose build
+#   3. docker compose up -d
+#   4. docker compose logs -f bot-<name>
+#
+# 新增 Bot：
+#   复制下面的 service 块，修改 BOT_NAME 和 env_file 路径即可
+# ============================================
+
+version: "3.8"
+
+services:
+  # ===== 测试机器人 =====
+  bot-test:
+    build: .
+    image: wecom-bot-framework:latest
+    container_name: wecom-bot-test
+    restart: unless-stopped
+    environment:
+      - BOT_NAME=test-bot
+      - NODE_ENV=production
+    env_file:
+      - ./bots/test-bot/.env
+    volumes:
+      # Bot 配置热更新（修改 config.json/agent.md 后 docker compose restart 即可）
+      - ./bots/test-bot/config.json:/app/bots/test-bot/config.json:ro
+      - ./bots/test-bot/agent.md:/app/bots/test-bot/agent.md:ro
+      # 日志持久化
+      - ./logs:/app/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===== 项目管理机器人 =====
+  bot-project:
+    build: .
+    image: wecom-bot-framework:latest
+    container_name: wecom-bot-project
+    restart: unless-stopped
+    environment:
+      - BOT_NAME=project-bot
+      - NODE_ENV=production
+    env_file:
+      - ./bots/project-bot/.env
+    volumes:
+      - ./bots/project-bot/config.json:/app/bots/project-bot/config.json:ro
+      - ./bots/project-bot/agent.md:/app/bots/project-bot/agent.md:ro
+      - ./logs:/app/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===== 党建助手机器人 =====
+  bot-party:
+    build: .
+    image: wecom-bot-framework:latest
+    container_name: wecom-bot-party
+    restart: unless-stopped
+    environment:
+      - BOT_NAME=party-bot
+      - NODE_ENV=production
+    env_file:
+      - ./bots/party-bot/.env
+    volumes:
+      - ./bots/party-bot/config.json:/app/bots/party-bot/config.json:ro
+      - ./bots/party-bot/agent.md:/app/bots/party-bot/agent.md:ro
+      - ./logs:/app/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
