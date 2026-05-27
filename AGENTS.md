@@ -1,4 +1,4 @@
-﻿# 企业微信智能机器人应用框架
+# 企业微信智能机器人应用框架
 
 > **AI 入口文件** — 任何 AI 工具进入此项目时，首先读取本文件。
 
@@ -73,3 +73,17 @@ npx tsx scripts/test-composite-skills.ts    # 组合 Skill 集成测试
 2. 📖 读取 [STANDARDS.md](STANDARDS.md) → 了解铁律
 3. 📖 读取 [ROADMAP.md](ROADMAP.md) → 了解全局进度
 4. 📖 读取对应角色的 AGENTS.md + PLAN.md → 开始工作
+
+---
+
+## Session 启动提示词
+
+每个角色有专用的 Session 启动提示词，位于 `prompts/` 目录。新开 AI 工具 Session 时，直接复制对应文件内容粘贴即可：
+
+| 角色 | 提示词文件 | 说明 |
+|------|-----------|------|
+| PA (架构师) | [prompts/PA.md](prompts/PA.md) | 无变量，直接使用 |
+| PM (项目经理) | [prompts/PM.md](prompts/PM.md) | 需替换 `{BOT_NAME}` 为实际 Bot 名 |
+| PC (运营协调) | [prompts/PC.md](prompts/PC.md) | 无变量，直接使用 |
+
+详见 [prompts/README.md](prompts/README.md)。
