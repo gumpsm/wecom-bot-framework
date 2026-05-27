@@ -1,0 +1,23 @@
+﻿# Auto-detect text files and normalize to LF for Linux deployment
+* text=auto
+
+# Source code - force LF
+*.ts text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sh text eol=lf
+*.env.example text eol=lf
+
+# Docker files - force LF
+Dockerfile text eol=lf
+.dockerignore text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
