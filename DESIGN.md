@@ -421,3 +421,45 @@ scripts/tests/AGENTS.md        ← 测试负责人边界
 | 14 | meeting.create_meeting invitees 格式 | MCP schema: { userid: [...] } 非数组 | 使用字典格式 |
 | 15 | meeting_start_datetime 格式 | 要求 "YYYY-MM-DD HH:mm"（空格+无秒） | 不能使用 ISO 8601 T分隔符 |
 | 16 | smartsheet 默认字段重命名失败 | 默认字段类型不兼容 | warn 继续，不影响主流程 |
+
+---
+
+## 13. Docker 部署 + 腾讯云实战 (2026-05-27)
+
+### 13.1 架构
+
+```
+腾讯云轻量服务器 (Ubuntu 24.04, 3.6GB RAM)
+├── Docker Engine 29.5.2
+├── docker-compose v5.1.4
+├── wecom-bot-test (test-bot, 旧凭据)
+└── 待部署: bot-party, bot-project (需独立 Bot 凭据)
+```
+
+### 13.2 一容器一 Bot 模式
+
+- 每个 Bot 一个 Docker 容器，通过 `BOT_NAME` 环境变量指定
+- 凭据通过 `env_file: bots/{name}/.env` 注入（每 Bot 独立）
+- Bot 配置（`config.json` + `agent.md`）通过 volume 挂载（只读）
+- 镜像统一使用 `wecom-bot-framework:latest`，一次构建多 Bot 复用
+- `docker-compose.yml` 中 project-bot 使用 `profiles: [project]` 默认禁用
+
+### 13.3 部署踩坑
+
+| # | 问题 | 原因 | 解决方案 |
+|---|------|------|---------|
+| 17 | 腾讯云 22 端口不通 | 旧防火墙规则未生效 | 删除重建 SSH 规则，来源限定 IP |
+| 18 | SSH .pem 权限 too open | Windows 上 NT AUTHORITY\Authenticated Users 有读权限 | `icacls` 仅保留当前用户 |
+| 19 | GitHub clone TLS 失败 | 国内服务器访问 GitHub 不稳定 | SCP 直接传项目文件 |
+| 20 | package.json BOM 字符 | Windows 编辑器添加 UTF-8 BOM | Dockerfile 内置 `sed` 清理 BOM+CRLF |
+| 21 | types.ts 字面量 `\n` | 源代码中 `\n` 为字面量非换行 | 替换为实际换行符 |
+| 22 | create-weekly-report.ts 重复导出 | 两份 `weeklyReportDefinition` 定义 | 删除重复的第一份，保留参数更完整的版本 |
+| 23 | volume 挂载文件 BOM 残留 | Dockerfile 清理仅影响 COPY 阶段，不影响 volume | 服务器上额外执行 sed BOM 清理 |
+
+### 13.4 开发模式决策
+
+- **test-bot**: 本地开发专用，永远不在生产环境运行
+- **新 Bot 流程**: 需求讨论 → 方案确认 → 本地 test-bot 开发测试 → 人工验证 → 创建正式 Bot 凭据 → 云服务器部署
+- **飞书 CLI**: 已调研（文档/智能表格能力更强），暂不引入（生态隔离，用户需额外账号）
+- **腾讯会议 API**: 待调研
+- 以上决策已写入 `STANDARDS.md` §二「开发流程规范」和 §九「待评估清单」
