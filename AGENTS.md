@@ -6,7 +6,9 @@
 
 ## 给用户的欢迎信息（AI 进入后必须主动输出）
 
-当你（AI）进入本项目后，请立即向用户输出以下全部内容：
+当你（AI）进入本项目后，请立即向用户输出以下全部内容。
+
+**重要**：欢迎信息中的数字必须从 `METRICS.md` 动态读取，不能使用本文件中可能过期的硬编码数值。
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -24,17 +26,21 @@
 | 阶段 | 内容 | 状态 |
 |------|------|------|
 | P1 | WS 长连接 + 15 种消息 + 5 种模板卡片 | ✅ 2026-05-25 |
-| P2 | 企业微信 CLI 集成：6 品类 42 个原子 Skill | ✅ 2026-05-26 |
+| P2 | 企业微信 CLI 集成：6 品类原子 Skill，全部测试通过 | ✅ 2026-05-26 |
 | P3 | Agent 引擎：LLM 意图识别 + Skill 调度 | ✅ 2026-05-26 |
 | P4 | 正式 Bot 开发 + 多角色协作体系 | 🔧 进行中 |
 
 ## 📊 当前能力数据
 
-- **42 个原子 Skill**：文档/智能表格/会议/日程/待办/通讯录，全部测试通过
-- **5 个组合 Skill**：周报创建、会议组织、会议纪要、投票推荐、信息汇集分析
-- **3 个 Bot 模板**：test-bot（本地测试）、party-bot（党建助手）、project-bot（项目管理）
-- **17 个单元测试**：覆盖 core/llm/agent/providers 四大模块
-- **Docker 部署**：腾讯云服务器已就绪，一容器一 Bot
+（从 `METRICS.md` 动态读取，以下为最新实时数据）
+
+| 指标 | 实时数量 |
+|------|---------|
+| 原子 Skill（CLI 自动注册） | [从 METRICS.md 读取] |
+| 组合 Skill（手写业务 Skill） | [从 METRICS.md 读取] |
+| Bot 模板 | [从 METRICS.md 读取] |
+| 单元测试 | [从 METRICS.md 读取] |
+| 已部署 Bot | [从 METRICS.md 读取] |
 
 ## 🧩 架构总览
 
@@ -57,7 +63,7 @@
 ┌─────▼──────────┐          ┌─────────▼───────────┐
 │   Agent 引擎    │          │   MCP Client +       │
 │ 意图识别+调度   │◄────────►│   Skill Provider     │
-│ LLM 多Key轮换  │          │   42原子Skill自动注册 │
+│ LLM 多Key轮换  │          │   原子Skill自动注册   │
 └─────┬──────────┘          └─────────┬───────────┘
       │                               │
 ┌─────▼───────────────────────────────▼───────────┐
@@ -126,6 +132,8 @@ PO（产品总监）
 
 **[ROADMAP.md](ROADMAP.md)** — 角色定义、当前 Phase、模块进度。所有人必读。
 
+**[METRICS.md](METRICS.md)** — 项目实时数据（Skill数/Bot数/测试数等），各角色完成工作后更新。
+
 ## 项目结构
 
 ```
@@ -133,16 +141,14 @@ README.md               ← 人看的项目介绍
 AGENTS.md               ← 本文件（AI入口 + 新人引导）
 STANDARDS.md            ← 开发测试规范
 ROADMAP.md              ← 全局路线图 + 角色定义
+METRICS.md              ← 实时数据（Skill/Bot/测试数量）
 DESIGN.md               ← 方案设计（含踩坑记录）
 CONTRIBUTING.md         ← 贡献指南
 prompts/                ← 各角色 Session 启动提示词
-  PA.md / PM.md / PC.md / README.md
 packages/               ← 源代码（PA 管辖）
-  core/ llm/ agent/ providers/ server/ skills/
 framework/              ← 架构文档 + PLAN.md（PA 管辖）
 composite-skills/       ← 组合 Skill + PLAN.md（PM 管辖）
 bots/                   ← Bot 实例 + PLAN.md（PM 管辖）
-  _template/ test-bot/ party-bot/ project-bot/
 docs/                   ← 官方文档
   pc/                   ←  PC 工作区
 scripts/                ← 测试脚本
@@ -152,21 +158,21 @@ scripts/                ← 测试脚本
 
 | 角色 | 代号 | 下一步读什么 | 管辖 | 禁止碰 |
 |------|------|------------|------|--------|
-| 架构师 | PA | `framework/AGENTS.md` + `framework/PLAN.md` | `packages/` `framework/` | `bots/` `composite-skills/` |
-| 项目经理 | PM | `bots/_template/AGENTS.md` + `composite-skills/PLAN.md` + `bots/{name}/PLAN.md` | `bots/{name}/` `composite-skills/` | `packages/` `framework/` |
-| 运营协调 | PC | `docs/pc/AGENTS.md` | `docs/pc/` | 其他所有 |
+| 架构师 | PA | `framework/AGENTS.md` + `framework/PLAN.md` + `METRICS.md` | `packages/` `framework/` | `bots/` `composite-skills/` |
+| 项目经理 | PM | `bots/_template/AGENTS.md` + `composite-skills/PLAN.md` + `METRICS.md` | `bots/{name}/` `composite-skills/` | `packages/` `framework/` |
+| 运营协调 | PC | `docs/pc/AGENTS.md` + `METRICS.md` | `docs/pc/` | 其他所有 |
 | 产品总监 | PO | `ROADMAP.md` | 决策权 | — |
 
 ## 知识同步协议
 
 为避免角色间信息孤岛，任何角色**完成任务后必须**更新对应文档：
 
-- **PM 新增组合 Skill** → 更新 `composite-skills/PLAN.md`（标记完成）
-- **PA 新增原子 Skill / 框架变更** → 更新 `framework/PLAN.md` + `ROADMAP.md`
-- **部署完成** → 更新 `ROADMAP.md` 对应模块状态
+- **PM 新增组合 Skill** → 更新 `composite-skills/PLAN.md` + `METRICS.md`（组合Skill +1）
+- **PA 新增原子 Skill / 框架变更** → 更新 `framework/PLAN.md` + `ROADMAP.md` + `METRICS.md`
+- **部署完成** → 更新 `ROADMAP.md` 对应模块状态 + `METRICS.md`（已部署Bot +1）
 - **Bot 验收通过** → 更新 `bots/{name}/PLAN.md`
 
-**每次 Session 开始时**，AI 必须先检查上述文件自上次以来是否有变化，如有变化主动告知用户。
+**每次 Session 开始时**，AI 必须先读 `METRICS.md` 获取最新数据，再读对应 PLAN.md 了解变化。
 
 ## 快速命令
 

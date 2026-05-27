@@ -520,3 +520,10 @@ PO 提需求
 1. 更新对应 PLAN.md 的状态（把 `[ ]` 改为 `[x]`）
 2. 如果变更影响其他角色，更新 ROADMAP.md
 3. Commit 信息中注明影响范围：`feat(composite): 新增xxx [影响: party-bot, project-bot]`
+
+### 15.5 METRICS.md 更新
+
+- `METRICS.md` 存放项目实时数据（Skill 数、Bot 数、测试数等）
+- 各角色完成工作后必须更新对应指标（见 METRICS.md 中的更新规则表）
+- Session 启动时 AI 必须从此文件读取最新数据，不能使用硬编码数值
+- 忘记更新 = 下一个启动的人看到过期数据
