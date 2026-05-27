@@ -3,9 +3,7 @@
 .env.local
 .env.*.local
 
-# 每个 Bot 实例的独立 .env（每 Bot 一容器部署模式）
 bots/*/.env
-!bots/*/.env.example
 
 # 依赖
 node_modules/

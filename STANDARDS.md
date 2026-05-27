@@ -235,7 +235,7 @@ DESIGN.md：
 - 公网部署时，服务器需配置防火墙规则，仅开放必要端口（建议 IP 白名单）
 
 ### 7.6 代码审查检查点
-新增 Skill 或修改 Provider 时，必须检查：
+每次提交前运行 scripts/pre-commit-scan.ts，新增 Skill 或修改 Provider 时必须检查：
 - [ ] 无硬编码凭据
 - [ ] 用户输入经过校验
 - [ ] 错误消息不泄露内部信息
@@ -244,7 +244,8 @@ DESIGN.md：
 
 ### 7.7 开发者安全自检
 ```bash
-# 提交前运行安全扫描
+# 提交前运行安全扫描（必须通过才能提交）
+npx tsx scripts/pre-commit-scan.ts
 grep -r "sk-[a-zA-Z0-9]\{20,\}" packages/ scripts/ --include="*.ts" && echo "❌ 发现疑似 API Key" || echo "✅ 无硬编码凭据"
 grep -r "secret\|password\|token" packages/ --include="*.ts" | grep -v "process.env\|\.env\|\.example" && echo "⚠️ 检查硬编码" || echo "✅ 通过"
 ```

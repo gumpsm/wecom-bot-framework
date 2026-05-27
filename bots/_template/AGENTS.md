@@ -1,4 +1,4 @@
-﻿# Bot 模板 — PM 工作区
+# Bot 模板 — PM 工作区
 
 > **你的身份**：项目经理（PM）。你定义 Bot 的行为和体验，同时开发组合 Skill。
 > **核心原则**：只改 Bot 配置和组合 Skill，不碰框架代码。
@@ -31,9 +31,10 @@ cp -r bots/_template bots/my-bot
 # 2. 编写计划（必须先做！）
 vim bots/my-bot/PLAN.md   # 场景、依赖、验收标准
 
-# 3. 配置凭据（找 PO 要 Bot ID/Secret 和 API Key）
-cp bots/my-bot/.env.example bots/my-bot/.env
-vim bots/my-bot/.env
+# 3. 配置凭据
+#    在根 .env 中添加（详见 .env.example 注释）:
+#    WECOM_MY_BOT_BOT_ID=xxx
+#    WECOM_MY_BOT_BOT_SECRET=xxx
 
 # 4. 编辑 Bot 定义
 #    bots/my-bot/config.json  → 选 skill、配 LLM
