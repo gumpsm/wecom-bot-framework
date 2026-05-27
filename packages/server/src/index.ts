@@ -6,13 +6,13 @@ import { LLMClientConfig } from \"@wecom-bot/llm\";
 import { BotConfig } from \"@wecom-bot/core\";
 
 // ============================================
-// 企业微信智能机器人框架 v0.3.0 — 服务入口
+// 企业微信智能机器人框架 v0.4.0 — 服务入口
 //
 // 支持两种运行模式：
 // 1. 单 Bot 模式（生产容器部署）：设置 BOT_NAME 环境变量，只启动指定 Bot
 // 2. 多 Bot 模式（本地开发）：扫描 bots/ 目录下所有 Bot 并启动
 //
-// 环境变量设计（v0.3.0 统一格式）：
+// 环境变量设计（v0.4.0 统一格式）：
 //   Bot 凭据:   WECOM_{BOT_NAME}_BOT_ID / _BOT_SECRET
 //   LLM 供应商: {PROVIDER}_KEY_N / _BASE_URL / _MODEL
 //
@@ -135,6 +135,8 @@ async function loadBotConfigs(
       process.exit(1);
     }
 
+    var envLLM = env[prefix + "_LLM"];
+    if (envLLM) { rawConfig.llmProvider = envLLM; }
     var llmCfgs = resolveLLMConfig(rawConfig, llmProviders);
 
     configs.push({
@@ -179,6 +181,8 @@ async function loadBotConfigs(
         continue;
       }
 
+      var envLLM2 = env[prefix2 + "_LLM"];
+      if (envLLM2) { rawCfg.llmProvider = envLLM2; }
       var llmCfgs2 = resolveLLMConfig(rawCfg, llmProviders);
 
       configs.push({
@@ -205,11 +209,11 @@ async function loadBotConfigs(
 
 async function main() {
   console.log(\"========================================\");
-  console.log(\"  企业微信智能机器人框架 v0.3.0\");
+  console.log(\"  企业微信智能机器人框架 v0.4.0\");
   console.log(\"========================================\");
   var mode = process.env.BOT_NAME ? \"单Bot模式: \" + process.env.BOT_NAME : \"多Bot模式\";
   console.log(\"  运行模式: \" + mode);
-  console.log(\"  环境变量: 统一根 .env（WECOM_{BOT}_ + {PROVIDER}_KEY_N）\");
+  console.log(\"  环境变量: .env 按 Bot 分组（凭据+LLM+部署）\");
   console.log(\"\");
 
   var env = loadEnv();
