@@ -1,4 +1,4 @@
-﻿# 企业微信智能机器人应用框架 — 方案设计文档
+# 企业微信智能机器人应用框架 — 方案设计文档
 
 > 本文档是项目开发的唯一权威设计依据。每次 Phase 完成后同步更新。
 
@@ -34,7 +34,6 @@
 ```
 I:\.codex_wecom\
 ├── DESIGN.md                    # 本文件
-├── PROMPT_TEMPLATE.md           # 复用提示词
 ├── package.json                 # monorepo 根
 ├── vitest.config.ts
 ├── tsconfig.json
@@ -233,13 +232,13 @@ wecom-cli 7 大品类：
 
 ```bash
 # 必填
-WECOM_BOT_ID=aibq5J_h8KtsVYS1WLdKmx_XFa2rcKSrtfg
-WECOM_BOT_SECRET=ixdjj3Y7JyCqn5Eqj8qQoRIbILNcksZ5ddjTokImI9g
+WECOM_BOT_ID=your_bot_id_here
+WECOM_BOT_SECRET=your_bot_secret_here
 
 # LLM API Keys
-DEEPSEEK_API_KEY_1=sk-db4b36015b594671b0727b64547a76f0
-DEEPSEEK_API_KEY_2=sk-5047c165c41944f49af93680a05ffbab
-DEEPSEEK_API_KEY_3=sk-55f84a2187ea4633b3d608d66bdb8a44
+DEEPSEEK_API_KEY_1=sk-your_key_1_here
+DEEPSEEK_API_KEY_2=sk-your_key_2_here
+DEEPSEEK_API_KEY_3=sk-your_key_3_here
 DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
 DEEPSEEK_MODEL=deepseek-chat
 ```
