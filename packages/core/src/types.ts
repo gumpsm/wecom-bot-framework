@@ -1,6 +1,5 @@
-// 核心类型定义 — 所有模块共享
-
-// ====== LLM 相关 ======
+// 鏍稿績绫诲瀷瀹氫箟 鈥?鎵€鏈夋ā鍧楀叡浜?
+// ====== LLM 鐩稿叧 ======
 
 export interface ChatMessage {
   role: "system" | "user" | "assistant" | "tool";
@@ -31,7 +30,7 @@ export interface StreamDelta {
   toolCall?: Partial<ToolCall>;
 }
 
-// ====== Skill 相关 ======
+// ====== Skill 鐩稿叧 ======
 
 export interface SkillDefinition {
   name: string;
@@ -63,7 +62,7 @@ export interface SkillStep {
   args: Record<string, unknown> | ((prevResult: unknown) => Record<string, unknown>);
 }
 
-// ====== 消息帧 ======
+// ====== 娑堟伅甯?======
 
 export interface WsFrame {
   cmd: string;
@@ -108,7 +107,8 @@ export interface EventCallback extends WsFrame {
     chatid?: string;
     chattype?: "single" | "group";
     from?: { userid: string };
-    msgtype: "event";\n    response_url?: string;
+    msgtype: "event";
+    response_url?: string;
     event: {
       eventtype: "enter_chat" | "template_card_event" | "feedback_event" | "disconnected_event";
       template_card_event?: TemplateCardEvent;
@@ -117,15 +117,29 @@ export interface EventCallback extends WsFrame {
   };
 }
 
-export interface TemplateCardEvent {\n  card_type: string;\n  event_key: string;\n  task_id: string;\n  selected_items?: SelectedItems;\n}\n\nexport interface SelectedItems {\n  selected_item: SelectedItem[];\n}\n\nexport interface SelectedItem {\n  question_key: string;\n  option_ids: { option_id: string[] };\n}
+export interface TemplateCardEvent {
+  card_type: string;
+  event_key: string;
+  task_id: string;
+  selected_items?: SelectedItems;
+}
+
+export interface SelectedItems {
+  selected_item: SelectedItem[];
+}
+
+export interface SelectedItem {
+  question_key: string;
+  option_ids: { option_id: string[] };
+}
 
 export interface FeedbackEvent {
   id: string;
-  type: 1 | 2; // 1=好评, 2=差评
+  type: 1 | 2; // 1=濂借瘎, 2=宸瘎
   content?: string;
 }
 
-// ====== Bot 配置 ======
+// ====== Bot 閰嶇疆 ======
 
 export interface BotConfig {
   instanceId: string;
@@ -143,7 +157,7 @@ export interface LLMConfig {
   backupApiKeys?: string[];
 }
 
-// ====== Provider 接口 ======
+// ====== Provider 鎺ュ彛 ======
 
 export interface Provider {
   readonly name: string;

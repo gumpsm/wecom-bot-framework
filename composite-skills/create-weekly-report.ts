@@ -1,50 +1,34 @@
-ï»¿import { SkillDefinition } from "../packages/core/src/types";
-
-export var weeklyReportDefinition: SkillDefinition = {
-  name: "create-weekly-report",
-  description: "åˆ›å»ºé¡¹ç›®å‘¨æŠ¥æ–‡æ¡£ã€‚å½“ç”¨æˆ·æåˆ°å†™å‘¨æŠ¥ã€æœ¬å‘¨æ€»ç»“ã€é¡¹ç›®è¿›å±•ã€é¡¹ç›®å‘¨æŠ¥æ—¶ä½¿ç”¨ã€‚éœ€æ”¶é›†é¡¹ç›®åç§°ã€æœ¬å‘¨è¿›å±•ã€ä¸‹å‘¨è®¡åˆ’ã€‚",
-  parameters: {
-    type: "object",
-    properties: {
-      projectName: { type: "string", description: "é¡¹ç›®åç§°" },
-      weekRange: { type: "string", description: "å‘¨æœŸèŒƒå›´ï¼Œå¦‚ 2026-05-26 ~ 2026-05-30" },
-      progress: { type: "string", description: "æœ¬å‘¨è¿›å±•ï¼Œå¤šæ¡ç”¨æ¢è¡Œåˆ†éš”" },
-      nextPlan: { type: "string", description: "ä¸‹å‘¨è®¡åˆ’ï¼Œå¤šæ¡ç”¨æ¢è¡Œåˆ†éš”" },
-    },
-    required: ["projectName", "weekRange", "progress", "nextPlan"],
-  },
-};
-
 import { SkillDefinition } from "../packages/core/src/types";
 
+
 export var weeklyReportDefinition: SkillDefinition = {
   name: "create-weekly-report",
-  description: "åˆ›å»ºé¡¹ç›®å‘¨æŠ¥æ–‡æ¡£ã€‚å½“ç”¨æˆ·æåˆ°å†™å‘¨æŠ¥ã€æœ¬å‘¨æ€»ç»“ã€æœ¬å‘¨è¿›å±•ã€é¡¹ç›®å‘¨æŠ¥æ—¶ä½¿ç”¨ã€‚éœ€è¦æ”¶é›†é¡¹ç›®åç§°ã€æœ¬å‘¨è¿›å±•åˆ—è¡¨ã€ä¸‹å‘¨è®¡åˆ’åˆ—è¡¨ã€‚",
+  description: "´´½¨ÏîÄ¿ÖÜ±¨ÎÄµµ¡£µ±ÓÃ»§Ìáµ½Ğ´ÖÜ±¨¡¢±¾ÖÜ×Ü½á¡¢±¾ÖÜ½øÕ¹¡¢ÏîÄ¿ÖÜ±¨Ê±Ê¹ÓÃ¡£ĞèÒªÊÕ¼¯ÏîÄ¿Ãû³Æ¡¢±¾ÖÜ½øÕ¹ÁĞ±í¡¢ÏÂÖÜ¼Æ»®ÁĞ±í¡£",
   parameters: {
     type: "object",
     properties: {
-      projectName: { type: "string", description: "é¡¹ç›®åç§°" },
-      weekRange: { type: "string", description: "å‘¨æœŸèŒƒå›´ï¼Œå¦‚ 2026-05-26 ~ 2026-05-30" },
-      progress: { type: "string", description: "æœ¬å‘¨è¿›å±•ï¼Œå¤šæ¡ç”¨æ¢è¡Œåˆ†éš”" },
-      nextPlan: { type: "string", description: "ä¸‹å‘¨è®¡åˆ’ï¼Œå¤šæ¡ç”¨æ¢è¡Œåˆ†éš”" },
-      risks: { type: "string", description: "é£é™©æè¿°ï¼ŒJSONæ•°ç»„æ ¼å¼ï¼Œå¯é€‰" },
-      members: { type: "string", description: "é¡¹ç›®æˆå‘˜ï¼Œé€—å·åˆ†éš”ï¼Œå¯é€‰" },
+      projectName: { type: "string", description: "ÏîÄ¿Ãû³Æ" },
+      weekRange: { type: "string", description: "ÖÜÆÚ·¶Î§£¬Èç 2026-05-26 ~ 2026-05-30" },
+      progress: { type: "string", description: "±¾ÖÜ½øÕ¹£¬¶àÌõÓÃ»»ĞĞ·Ö¸ô" },
+      nextPlan: { type: "string", description: "ÏÂÖÜ¼Æ»®£¬¶àÌõÓÃ»»ĞĞ·Ö¸ô" },
+      risks: { type: "string", description: "·çÏÕÃèÊö£¬JSONÊı×é¸ñÊ½£¬¿ÉÑ¡" },
+      members: { type: "string", description: "ÏîÄ¿³ÉÔ±£¬¶ººÅ·Ö¸ô£¬¿ÉÑ¡" },
     },
     required: ["projectName", "weekRange", "progress", "nextPlan"],
   },
 };
 
-// Composite Skill: å‘¨æŠ¥åˆ›å»º
-// è¾“å…¥é¡¹ç›®ä¿¡æ¯ â†’ LLMç”Ÿæˆå‘¨æŠ¥å†…å®¹ â†’ åˆ›å»ºæ–‡æ¡£ â†’ å†™å…¥å†…å®¹ â†’ è¿”å›æ–‡æ¡£é“¾æ¥
+// Composite Skill: ÖÜ±¨´´½¨
+// ÊäÈëÏîÄ¿ĞÅÏ¢ ¡ú LLMÉú³ÉÖÜ±¨ÄÚÈİ ¡ú ´´½¨ÎÄµµ ¡ú Ğ´ÈëÄÚÈİ ¡ú ·µ»ØÎÄµµÁ´½Ó
 import { LLMClient, LLMClientConfig } from "./llm-deps";
 
 export interface WeeklyReportInput {
   projectName: string;
   weekRange: string;           // e.g. "2026-05-26 ~ 2026-06-01"
-  progress: string[];          // æœ¬å‘¨è¿›å±•åˆ—è¡¨
-  nextPlan: string[];          // ä¸‹å‘¨è®¡åˆ’åˆ—è¡¨
+  progress: string[];          // ±¾ÖÜ½øÕ¹ÁĞ±í
+  nextPlan: string[];          // ÏÂÖÜ¼Æ»®ÁĞ±í
   risks?: Array<{ item: string; level: string; solution: string }>;
-  members?: string[];          // é¡¹ç›®æˆå‘˜
+  members?: string[];          // ÏîÄ¿³ÉÔ±
 }
 
 export interface WeeklyReportOutput {
@@ -64,7 +48,7 @@ export async function createWeeklyReport(
   input: WeeklyReportInput,
   deps: WeeklyReportDeps
 ): Promise<WeeklyReportOutput> {
-  // 1. å‚æ•°æ ¡éªŒ
+  // 1. ²ÎÊıĞ£Ñé
   var missing: string[] = [];
   if (!input.projectName) missing.push("projectName");
   if (!input.weekRange) missing.push("weekRange");
@@ -74,10 +58,10 @@ export async function createWeeklyReport(
     throw new Error("createWeeklyReport: missing required fields: " + missing.join(", "));
   }
 
-  // 2. ç”¨ LLM ç”Ÿæˆå‘¨æŠ¥å†…å®¹
+  // 2. ÓÃ LLM Éú³ÉÖÜ±¨ÄÚÈİ
   var riskSection = "";
   if (input.risks && input.risks.length > 0) {
-    riskSection = "\n\n## é£é™©ä¸é—®é¢˜\n| é£é™© | ç­‰çº§ | åº”å¯¹ |\n|------|------|------|\n";
+    riskSection = "\n\n## ·çÏÕÓëÎÊÌâ\n| ·çÏÕ | µÈ¼¶ | Ó¦¶Ô |\n|------|------|------|\n";
     for (var r of input.risks) {
       riskSection += "| " + r.item + " | " + r.level + " | " + r.solution + " |\n";
     }
@@ -85,19 +69,19 @@ export async function createWeeklyReport(
 
   var memberSection = "";
   if (input.members && input.members.length > 0) {
-    memberSection = "\n\n## é¡¹ç›®æˆå‘˜\n" + input.members.map(function(m: string) { return "- " + m; }).join("\n");
+    memberSection = "\n\n## ÏîÄ¿³ÉÔ±\n" + input.members.map(function(m: string) { return "- " + m; }).join("\n");
   }
 
   var progressText = input.progress.map(function(p: string) { return "- " + p; }).join("\n");
   var planText = input.nextPlan.map(function(p: string) { return "- " + p; }).join("\n");
 
-  var rawContent = "# " + input.projectName + " å‘¨æŠ¥\n\n" +
-    "**å‘¨æœŸ**: " + input.weekRange + "\n\n" +
-    "## æœ¬å‘¨è¿›å±•\n" + progressText + "\n\n" +
-    "## ä¸‹å‘¨è®¡åˆ’\n" + planText +
-    riskSection + memberSection + "\n\n> ç”Ÿæˆæ—¶é—´: " + new Date().toLocaleString();
+  var rawContent = "# " + input.projectName + " ÖÜ±¨\n\n" +
+    "**ÖÜÆÚ**: " + input.weekRange + "\n\n" +
+    "## ±¾ÖÜ½øÕ¹\n" + progressText + "\n\n" +
+    "## ÏÂÖÜ¼Æ»®\n" + planText +
+    riskSection + memberSection + "\n\n> Éú³ÉÊ±¼ä: " + new Date().toLocaleString();
 
-  // 3. ç”¨ LLM æ¶¦è‰²ï¼ˆå¦‚æœ systemPrompt æä¾›äº†è§’è‰²è®¾å®šï¼‰
+  // 3. ÓÃ LLM ÈóÉ«£¨Èç¹û systemPrompt Ìá¹©ÁË½ÇÉ«Éè¶¨£©
   var finalContent = rawContent;
   if (deps.systemPrompt) {
     try {
@@ -105,7 +89,7 @@ export async function createWeeklyReport(
         messages: [
           {
             role: "user",
-            content: "è¯·æ ¹æ®ä»¥ä¸‹ä¿¡æ¯ï¼Œæ•´ç†æˆä¸€ä»½ä¸“ä¸šæ ¼å¼çš„é¡¹ç›®å‘¨æŠ¥ï¼Œä¿æŒåŸæœ‰ç»“æ„å’Œå†…å®¹ï¼Œåªä¼˜åŒ–è¡¨è¾¾ï¼š" +
+            content: "Çë¸ù¾İÒÔÏÂĞÅÏ¢£¬ÕûÀí³ÉÒ»·İ×¨Òµ¸ñÊ½µÄÏîÄ¿ÖÜ±¨£¬±£³ÖÔ­ÓĞ½á¹¹ºÍÄÚÈİ£¬Ö»ÓÅ»¯±í´ï£º" +
               rawContent
           }
         ],
@@ -120,16 +104,16 @@ export async function createWeeklyReport(
     }
   }
 
-  // 4. åˆ›å»ºæ–‡æ¡£
+  // 4. ´´½¨ÎÄµµ
   var docResult = await deps.callTool("doc", "create_doc", {
     doc_type: 3,
-    doc_name: input.projectName + " å‘¨æŠ¥ " + input.weekRange.split("~")[0].trim(),
+    doc_name: input.projectName + " ÖÜ±¨ " + input.weekRange.split("~")[0].trim(),
   }) as Record<string, unknown>;
 
   var docId = docResult.docid as string;
   var docUrl = docResult.url as string;
 
-  // 5. å†™å…¥å†…å®¹
+  // 5. Ğ´ÈëÄÚÈİ
   await deps.callTool("doc", "edit_doc_content", {
     content_type: 1,
     content: finalContent,
