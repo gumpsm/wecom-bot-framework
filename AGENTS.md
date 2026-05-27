@@ -8,7 +8,14 @@
 
 当你（AI）进入本项目后，请立即向用户输出以下全部内容。
 
-**重要**：欢迎信息中的数字必须从 `METRICS.md` 动态读取，不能使用本文件中可能过期的硬编码数值。
+**⚠️ 关键：所有数据必须从对应源文件动态读取，绝对不使用本文件中可能过期的硬编码数值。**
+
+**数据源映射**（AI 必须在输出前读取这些文件）：
+- 项目历程 → `ROADMAP.md` 版本历史表
+- 当前指标 → `METRICS.md` 当前指标表
+- Bot 列表 → `bots/PLAN.md` Bot 清单表
+- 组合 Skill 列表 → `composite-skills/PLAN.md` 能力清单表
+- 各模块进度 → `ROADMAP.md` Phase 模块状态表
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -17,30 +24,45 @@
 
 ## 📖 这是什么
 
-一个 **企业微信智能机器人的全栈开发和部署框架**，核心思路是：
+一个 **企业微信智能机器人的全栈开发和部署框架**，核心思路：
 把企业微信的长连接、CLI 能力、大模型 API 封装成可复用的原子能力和
 组合业务 Skill，让你可以快速开发出各种场景的智能机器人。
 
 ## 🏗 项目历程
 
-| 阶段 | 内容 | 状态 |
+（从 `ROADMAP.md` 版本历史表动态读取）
+
+| 版本 | 日期 | 内容 |
 |------|------|------|
-| P1 | WS 长连接 + 15 种消息 + 5 种模板卡片 | ✅ 2026-05-25 |
-| P2 | 企业微信 CLI 集成：6 品类原子 Skill，全部测试通过 | ✅ 2026-05-26 |
-| P3 | Agent 引擎：LLM 意图识别 + Skill 调度 | ✅ 2026-05-26 |
-| P4 | 正式 Bot 开发 + 多角色协作体系 | 🔧 进行中 |
+| [读取 ROADMAP.md 版本历史表，展示最近 5 个版本] |
 
 ## 📊 当前能力数据
 
-（从 `METRICS.md` 动态读取，以下为最新实时数据）
+（从 `METRICS.md` 动态读取）
 
 | 指标 | 实时数量 |
 |------|---------|
-| 原子 Skill（CLI 自动注册） | [从 METRICS.md 读取] |
-| 组合 Skill（手写业务 Skill） | [从 METRICS.md 读取] |
-| Bot 模板 | [从 METRICS.md 读取] |
-| 单元测试 | [从 METRICS.md 读取] |
-| 已部署 Bot | [从 METRICS.md 读取] |
+| 原子 Skill | [METRICS.md: 原子 Skill] |
+| 组合 Skill | [METRICS.md: 组合 Skill] |
+| Bot 模板 | [METRICS.md: Bot 模板] |
+| 单元测试 | [METRICS.md: 单元测试] |
+| 已部署 Bot | [METRICS.md: 已部署 Bot] |
+
+## 🤖 已有 Bot
+
+（从 `bots/PLAN.md` Bot 清单表动态读取）
+
+| Bot | 状态 | 说明 |
+|-----|------|------|
+| [读取 bots/PLAN.md 的 Bot 清单表] |
+
+## 🧩 已有组合 Skill
+
+（从 `composite-skills/PLAN.md` 能力清单表动态读取）
+
+| Skill | 名称 | 状态 |
+|-------|------|------|
+| [读取 composite-skills/PLAN.md 的能力清单表] |
 
 ## 🧩 架构总览
 
@@ -98,16 +120,13 @@ PO（产品总监）
 
 **🅰️ 架构师 (PA)**
 → 改框架代码、配置原子Skill、维护规范、执行生产部署
-→ 适合：技术负责人、基础设施维护者
 
 **🅱️ 项目经理 (PM)**
 → 开发具体 Bot 的人设和配置、写组合Skill、本地测试
-→ 适合：Bot 产品经理、业务场景开发者
-→ 需要告诉我你要开发哪个 Bot（如 party-bot / project-bot）
+→ 需要告诉我你要开发哪个 Bot
 
 **🅲 运营协调 (PC)**
 → 汇总项目进度、写日报周报、做宣传材料
-→ 适合：项目运营、对外宣传
 
 选好后，我会加载对应的 Session 提示词，自动进入工作状态。
 ```
@@ -122,7 +141,8 @@ PO（产品总监）
 # 企业微信智能机器人应用框架
 
 > **AI 入口文件** — 任何 AI 工具进入此项目时，首先读取本文件。
-> 本文件同时承担**新人上手引导**职能——AI 读到它后会主动介绍项目。
+> 本文件同时承担**新人上手引导**——AI 读到它后会主动介绍项目。
+> **所有会变的数据都从对应源文件动态读取，本文件不硬编码任何可变内容。**
 
 ## 必读规范
 
@@ -130,9 +150,13 @@ PO（产品总监）
 
 ## 了解全局
 
-**[ROADMAP.md](ROADMAP.md)** — 角色定义、当前 Phase、模块进度。所有人必读。
-
-**[METRICS.md](METRICS.md)** — 项目实时数据（Skill数/Bot数/测试数等），各角色完成工作后更新。
+| 文件 | 内容 | 何时读 |
+|------|------|--------|
+| [ROADMAP.md](ROADMAP.md) | 角色定义、Phase进度、版本历史 | 每次启动 |
+| [METRICS.md](METRICS.md) | Skill/Bot/测试实时数量 | 每次启动 |
+| [bots/PLAN.md](bots/PLAN.md) | Bot 清单和状态 | 每次启动 |
+| [composite-skills/PLAN.md](composite-skills/PLAN.md) | 组合 Skill 清单 | 每次启动 |
+| [framework/PLAN.md](framework/PLAN.md) | 框架开发计划 | 每次启动 |
 
 ## 项目结构
 
@@ -140,7 +164,7 @@ PO（产品总监）
 README.md               ← 人看的项目介绍
 AGENTS.md               ← 本文件（AI入口 + 新人引导）
 STANDARDS.md            ← 开发测试规范
-ROADMAP.md              ← 全局路线图 + 角色定义
+ROADMAP.md              ← 全局路线图 + 角色定义 + 版本历史
 METRICS.md              ← 实时数据（Skill/Bot/测试数量）
 DESIGN.md               ← 方案设计（含踩坑记录）
 CONTRIBUTING.md         ← 贡献指南
@@ -158,21 +182,26 @@ scripts/                ← 测试脚本
 
 | 角色 | 代号 | 下一步读什么 | 管辖 | 禁止碰 |
 |------|------|------------|------|--------|
-| 架构师 | PA | `framework/AGENTS.md` + `framework/PLAN.md` + `METRICS.md` | `packages/` `framework/` | `bots/` `composite-skills/` |
-| 项目经理 | PM | `bots/_template/AGENTS.md` + `composite-skills/PLAN.md` + `METRICS.md` | `bots/{name}/` `composite-skills/` | `packages/` `framework/` |
-| 运营协调 | PC | `docs/pc/AGENTS.md` + `METRICS.md` | `docs/pc/` | 其他所有 |
+| 架构师 | PA | `framework/AGENTS.md` + `framework/PLAN.md` | `packages/` `framework/` | `bots/` `composite-skills/` |
+| 项目经理 | PM | `bots/_template/AGENTS.md` + `bots/{name}/PLAN.md` + `composite-skills/PLAN.md` | `bots/{name}/` `composite-skills/` | `packages/` `framework/` |
+| 运营协调 | PC | `docs/pc/AGENTS.md` | `docs/pc/` | 其他所有 |
 | 产品总监 | PO | `ROADMAP.md` | 决策权 | — |
 
 ## 知识同步协议
 
-为避免角色间信息孤岛，任何角色**完成任务后必须**更新对应文档：
+**谁做事，谁更新文档。** 完成工作后必须更新对应的源文件：
 
-- **PM 新增组合 Skill** → 更新 `composite-skills/PLAN.md` + `METRICS.md`（组合Skill +1）
-- **PA 新增原子 Skill / 框架变更** → 更新 `framework/PLAN.md` + `ROADMAP.md` + `METRICS.md`
-- **部署完成** → 更新 `ROADMAP.md` 对应模块状态 + `METRICS.md`（已部署Bot +1）
-- **Bot 验收通过** → 更新 `bots/{name}/PLAN.md`
+| 你做了什么 | 更新哪个文件 |
+|-----------|------------|
+| 新增组合 Skill | `composite-skills/PLAN.md` + `METRICS.md` |
+| 新增原子 Skill | `framework/PLAN.md` + `METRICS.md` |
+| 新建 Bot | `bots/PLAN.md` + `METRICS.md` + `ROADMAP.md` |
+| 新增测试 | `METRICS.md` |
+| 部署上线 | `ROADMAP.md` + `METRICS.md` |
+| Phase 完成 | `ROADMAP.md` 版本历史表 |
+| Bot 验收通过 | `bots/{name}/PLAN.md` |
 
-**每次 Session 开始时**，AI 必须先读 `METRICS.md` 获取最新数据，再读对应 PLAN.md 了解变化。
+**忘记更新 = 下一个启动的人看到过期数据。**
 
 ## 快速命令
 
