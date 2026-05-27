@@ -1,31 +1,37 @@
-ï»¿# ============================================
-# ä¼ä¸šå¾®ä¿¡æ™ºèƒ½æœºå™¨äººæ¡†æ¶ â€” Docker é•œåƒ
+# ============================================
+# ÆóÒµÎ¢ĞÅÖÇÄÜ»úÆ÷ÈË¿ò¼Ü ¡ª Docker ¾µÏñ
 # 
-# æ„å»ºï¼šdocker build -t wecom-bot-framework .
-# è¿è¡Œï¼šdocker compose up -d
+# ¹¹½¨£ºdocker build -t wecom-bot-framework .
+# ÔËĞĞ£ºdocker compose up -d
 # ============================================
 
 FROM node:22-alpine
 
-# å®‰å…¨ï¼šåˆ›å»ºé root ç”¨æˆ·
+# °²È«£º´´½¨·Ç root ÓÃ»§
 RUN addgroup -g 1001 botgroup && \
     adduser -u 1001 -G botgroup -s /bin/sh -D botuser
 
 WORKDIR /app
 
-# å¤åˆ¶å…¨éƒ¨æºç ï¼ˆ.dockerignore æ’é™¤ node_modules/logs/.git ç­‰ï¼‰
+# ¸´ÖÆÈ«²¿Ô´Âë£¨.dockerignore ÅÅ³ı node_modules/logs/.git µÈ£©
 COPY --chown=botuser:botgroup . .
 
-# å®‰è£…ä¾èµ–ï¼ˆå« tsxï¼Œç”¨äºè¿è¡Œæ—¶æ‰§è¡Œ TypeScriptï¼‰
+# ÇåÀí Windows ´øÀ´µÄ BOM ºÍ CRLF£¨·ÀÖ¹ JSON/TS ½âÎöÊ§°Ü£©
+RUN find . -type f \( -name "*.json" -o -name "*.ts" -o -name "*.md" \) \
+    -exec sed -i '1s/^\xEF\xBB\xBF//' {} \; && \
+    find . -type f \( -name "*.ts" -o -name "*.sh" -o -name "*.json" -o -name "*.md" -o -name "*.yml" \) \
+    -exec sed -i 's/\r$//' {} \;
+
+# °²×°ÒÀÀµ£¨º¬ tsx£¬ÓÃÓÚÔËĞĞÊ±Ö´ĞĞ TypeScript£©
 RUN npm install --ignore-scripts && \
     npm cache clean --force
 
-# åˆ‡æ¢åˆ°é root ç”¨æˆ·
+# ÇĞ»»µ½·Ç root ÓÃ»§
 USER botuser
 
-# å¥åº·æ£€æŸ¥ï¼šç”¨è¿›ç¨‹å­˜æ´»åˆ¤æ–­
+# ½¡¿µ¼ì²é£ºÓÃ½ø³Ì´æ»îÅĞ¶Ï
 HEALTHCHECK --interval=60s --timeout=10s --start-period=30s --retries=3 \
     CMD pgrep -f "tsx packages/server" > /dev/null || exit 1
 
-# å…¥å£ï¼ˆBOT_NAME åœ¨ docker-compose environment ä¸­è®¾ç½®ï¼‰
+# Èë¿Ú£¨BOT_NAME ÔÚ docker-compose environment ÖĞÉèÖÃ£©
 CMD ["sh", "-c", "npx tsx packages/server/src/index.ts"]
