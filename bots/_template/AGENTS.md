@@ -1,24 +1,39 @@
-﻿# Bot 模板 — Bot PM 工作区
+﻿# Bot 模板 — PM 工作区
 
-> **你的身份**：Bot 产品经理。你定义 bot 的行为和体验。
-> **核心原则**：只改配置不改代码、场景驱动验收、先复用再新建。
+> **你的身份**：项目经理（PM）。你定义 Bot 的行为和体验，同时开发组合 Skill。
+> **核心原则**：只改 Bot 配置和组合 Skill，不碰框架代码。
 > **先读**：[../STANDARDS.md](../STANDARDS.md) + [../ROADMAP.md](../ROADMAP.md)
-> **你的计划**：[../PLAN.md](../PLAN.md)（Bot 总览）+ 本目录下的 `PLAN.md`（本 Bot 计划）
+> **你的计划**：[../bots/PLAN.md](../PLAN.md)（Bot 总览）+ 本目录下的 `PLAN.md`（本 Bot 计划）
+> **组合 Skill**：[../composite-skills/PLAN.md](../composite-skills/PLAN.md)
+
+## 你可以修改的目录
+
+```
+bots/{your-bot}/              ← Bot 配置和人设（你的核心工作）
+composite-skills/             ← 组合 Skill（PM 负责开发编排）
+```
+
+## 你不能修改的目录
+
+```
+packages/                     ← PA（架构师）的地盘，绝对不能动
+framework/                    ← PA 的地盘
+docs/pc/                      ← PC（运营协调）的地盘
+bots/其他Bot目录/              ← 其他 PM 的 Bot，不跨 Bot 修改
+```
 
 ## 新建 Bot 流程
 
 ```bash
 # 1. 复制模板
-cp -r bots/_template bots/my-bot     # Linux/macOS
-# 或 Windows PowerShell:
-# Copy-Item -Recurse bots/_template bots/my-bot
+cp -r bots/_template bots/my-bot
 
 # 2. 编写计划（必须先做！）
 vim bots/my-bot/PLAN.md   # 场景、依赖、验收标准
 
-# 3. 配置凭据
+# 3. 配置凭据（找 PO 要 Bot ID/Secret 和 API Key）
 cp bots/my-bot/.env.example bots/my-bot/.env
-# 编辑 bots/my-bot/.env → 填入真实 Bot ID/Secret 和 LLM API Key
+vim bots/my-bot/.env
 
 # 4. 编辑 Bot 定义
 #    bots/my-bot/config.json  → 选 skill、配 LLM
@@ -26,26 +41,27 @@ cp bots/my-bot/.env.example bots/my-bot/.env
 
 # 5. 本地 test-bot 开发测试 → 全部通过
 
-# 6. 交给运维部署（docker compose up -d）
+# 6. 通知 PA 部署到生产服务器
 ```
 
-## 你可以修改的文件
+## 需要新的组合 Skill 时
 
-```
-bots/{your-bot}/PLAN.md       ← Bot 开发计划（必须先写！）
-bots/{your-bot}/config.json   ← bot 配置（skill 列表、LLM 选择）
-bots/{your-bot}/agent.md      ← bot 人设 + 行为规则
-bots/{your-bot}/.env          ← 凭据（不提交 Git）
-```
+1. 在 `composite-skills/` 下创建 `.ts` 文件（参考现有 Skill 的模式）
+2. 必须包含：Input/Output 类型、SkillDefinition、执行函数、参数校验、错误回滚
+3. 在本地 test-bot 验证至少 1 个完整场景
+4. 更新 `composite-skills/PLAN.md` 的状态
+5. 更新 Bot 的 `config.json` skills 列表
 
-## 你不能修改的文件
+## 需要新的原子 Skill 时
 
-```
-packages/                     ← 框架核心代码
-composite-skills/             ← 找 Skill 编排者提需求，不自己改
-framework/                    ← 架构设计文档
-bots/其他Bot目录/              ← 不跨 Bot 修改
-```
+**找 PA（架构师）**。PM 不自己写原子 Skill 或修改 MCP 配置。
+
+## 多个 PM 同时工作时
+
+- 各自在独立 Session 中运行本地 server
+- 使用自己的 test-bot 凭据（互不干扰）
+- 代码通过 Git 分支隔离
+- 不直接修改其他 PM 的 Bot 目录
 
 ## config.json 说明
 
@@ -54,8 +70,6 @@ bots/其他Bot目录/              ← 不跨 Bot 修改
   "systemPrompt": "简短的系统提示词（会被 agent.md 覆盖）",
   "skills": [
     "meeting.create_meeting",     // 原子 skill（品类.方法名）
-    "schedule.create_schedule",   // 原子 skill
-    "todo.create_todo",           // 原子 skill
     "create-weekly-report"        // 组合 skill（来自 composite-skills/）
   ],
   "llm": {
@@ -64,12 +78,6 @@ bots/其他Bot目录/              ← 不跨 Bot 修改
   }
 }
 ```
-
-**选择 skill 的原则：**
-- 先查 [composite-skills/PLAN.md](../composite-skills/PLAN.md) 看有没有现成的组合 skill
-- 没有组合 skill 的，直接用原子 skill（通过 MCP tools/list 获取完整列表）
-- 一次不要选超过 10 个 skill，保证 Agent 意图识别准确
-- 需要新 Skill → 向 Skill 编排者提需求，不自己写
 
 ## agent.md 编写规范
 
@@ -80,23 +88,15 @@ bots/其他Bot目录/              ← 不跨 Bot 修改
 # 行为规则
 - [规则1：如"所有创建操作必须确认后执行"]
 - [规则2：如"缺少信息时主动追问"]
-- [规则3：如"回答简洁，先结论后细节"]
 
 # 可用技能
-- [技能1触发词]：用户说"[触发短语]" → [动作描述]
-- [技能2触发词]：用户说"[触发短语]" → [动作描述]
+- [技能1]：用户说"[触发词]" → [动作描述]
 ```
-
-**写好 agent.md 的原则：**
-- 角色定位一句话说清，不要写作文
-- 行为规则写"边界"不写"流程"，流程交给 Agent 引擎
-- 技能描述写"触发条件"和"执行动作"，让 Agent 能精确匹配
 
 ## 质量门禁
 
 - [ ] PLAN.md 已编写（场景 + 依赖 + 验收标准）
-- [ ] config.json 的 skills 列表每一项都存在于 composite-skills/ 或为有效原子 skill
-- [ ] .env 文件已创建且通过安全自检
-- [ ] agent.md 不超过 50 行（保持简洁）
-- [ ] 至少定义 3 个明确的 trigger-action 对
+- [ ] config.json 的 skills 列表每一项都存在
+- [ ] agent.md 不超过 50 行
+- [ ] 至少定义 3 个 trigger-action 对
 - [ ] 本地 test-bot 验证过 3 个场景
