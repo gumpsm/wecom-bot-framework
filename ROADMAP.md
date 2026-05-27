@@ -23,18 +23,19 @@
 
 ## 当前版本
 
-**v0.2.0** — 框架就绪，正式 Bot 开发阶段
+**v0.4.0** — 框架就绪，正式 Bot 开发阶段
 
-## 当前 Phase：P4 — 正式 Bot 开发
+## 当前 Phase：P4 — 正式 Bot 开发（party-bot / project-bot）
 
 | 模块 | 状态 | 负责角色 | 计划文件 |
 |------|------|---------|---------|
 | framework | ✅ 稳定 | PA | [framework/PLAN.md](framework/PLAN.md) |
 | composite-skills | ✅ 5 个完成 | PM | [composite-skills/PLAN.md](composite-skills/PLAN.md) |
-| bot: pa-bot | ✅ 本地测试用 | PM | [bots/pa-bot/PLAN.md](bots/pa-bot/PLAN.md) |
-| bot: party-bot | 📋 待开发 | PM | [bots/party-bot/PLAN.md](bots/party-bot/PLAN.md) |
-| bot: project-bot | 📋 待开发 | PM | [bots/project-bot/PLAN.md](bots/project-bot/PLAN.md) |
-| 腾讯会议 API | 🔍 待调研 | PA | framework/PLAN.md |
+| bot: pa-bot | ✅ PA 框架测试 | PM | [bots/pa-bot/PLAN.md](bots/pa-bot/PLAN.md) |
+| bot: party-bot | 🔧 开发中 | PM | [bots/party-bot/PLAN.md](bots/party-bot/PLAN.md) |
+| bot: project-bot | 🔧 开发中 | PM | [bots/project-bot/PLAN.md](bots/project-bot/PLAN.md) |
+| 腾讯会议 API | 🔍 待调研 | PA |
+| 环境变量体系 | ✅ v0.4.0 按Bot分组 | PA | framework/PLAN.md |
 | 飞书 CLI | ⏸️ 暂不引入 | — | STANDARDS.md §九 |
 
 ## 协作流程
@@ -75,7 +76,7 @@ PO 提需求
 |------|------|------|
 | v0.1.0 | 2026-05-25 | P1 长连接消息收发 + 5 种模板卡片 |
 | v0.1.3 | 2026-05-26 | P2 CLI 集成 42 原子 Skill + 5 组合 Skill + P3 Agent 引擎 |
-| v0.2.0 | 2026-05-27 | 安全改造 + Docker 部署 + 开发流程规范 + 角色体系 |
+| v0.4.0 | 2026-05-27 | 安全改造 + Docker 部署 + 开发流程规范 + 角色体系 |
 
 ## 项目实时数据
 

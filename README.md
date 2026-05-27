@@ -108,7 +108,7 @@ $env:BOT_NAME="party-bot"; npx tsx packages/server/src/index.ts  # 单 Bot 模�
 ## 开发流程
 
 ```
-需求讨论（PO+PM）→ 本地开发（PM, test-bot）→ 全量测试 → PO 验收 → PA 生产部署
+需求讨论（PO+PM）→ 本地开发（PM, pa-bot）→ 全量测试 → PO 验收 → PA 生产部署
 ```
 
 - PM 不碰生产环境，不碰他人 Bot，不碰框架代码

@@ -155,12 +155,12 @@ async function main() {
   console.log("\n【场景 5】创建待办");
   try {
     var t1 = await client.callTool("todo", "create_todo", {
-      content: "[P2演示] 完成 DESIGN.md 和 PROMPT_TEMPLATE.md 更新",
+      content: "[P2演示] 完成 DESIGN.md 更新",
       remind_time: daysLater(1) + " 09:00:00",
     }) as any;
     var todoId = t1.todo_id || "";
     console.log("  待办ID: " + todoId);
-    console.log("  内容:   完成 DESIGN.md 和 PROMPT_TEMPLATE.md 更新");
+    console.log("  内容:   完成 DESIGN.md 更新");
     console.log("  提醒:   " + daysLater(1) + " 09:00");
     console.log("  ✅ 待办已创建");
     CREATED.push("todo:" + todoId);
