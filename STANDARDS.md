@@ -484,3 +484,39 @@ PO 提需求
 ### 14.5 PM 兼任 Skill 编排
 
 当前阶段 PM 同时负责组合 Skill 的开发和 Bot 配置。`composite-skills/` 目录归 PM 管辖。若未来团队扩大需要拆分出独立的 Skill 编排角色，从 PM 中分离即可，目录边界不变。
+
+---
+
+## 十五、知识同步协议（Knowledge Sync）
+
+### 15.1 原则
+各角色独立工作，但**能力变更必须对所有角色可见**。通过更新 PLAN.md 和 ROADMAP.md 实现知识共享。
+
+### 15.2 变更通知规则
+
+| 变更事件 | 谁负责更新 | 更新文件 | 影响谁 |
+|---------|-----------|---------|--------|
+| PM 新增/修改组合 Skill | PM | `composite-skills/PLAN.md` → 标记完成 | 所有 PM、PA |
+| PM 完成 Bot 场景验证 | PM | `bots/{name}/PLAN.md` → 更新状态 | PO、PA |
+| PA 新增原子 Skill | PA | `framework/PLAN.md` + `ROADMAP.md` | 所有 PM |
+| PA 框架接口变更 | PA | `framework/PLAN.md` + `ROADMAP.md`（标注破坏性） | 所有 PM |
+| PA 执行生产部署 | PA | `ROADMAP.md` → 更新模块状态为「已部署」 | 所有人 |
+| 决策变更（如引入新技术） | 决策者 | `ROADMAP.md` + `STANDARDS.md` §九 | 所有人 |
+
+### 15.3 AI Session 启动时的同步检查
+
+每次 AI Session 启动后，在开始工作前，必须执行以下检查：
+
+1. 读取 `ROADMAP.md` → 检查 Phase 和各模块状态是否变化
+2. 读取自己角色的 `PLAN.md` → 检查任务是否更新
+3. 读取依赖角色的 `PLAN.md` → 检查可用的新能力
+   - PM 读 `composite-skills/PLAN.md` → 看是否有新的组合 Skill 可用
+   - PM 读 `framework/PLAN.md` → 看是否有新的原子 Skill 或框架变更
+   - PA 读 `composite-skills/PLAN.md` → 了解 Skill 开发进度
+4. 如发现变化，主动向用户汇报：`📢 自上次以来，[模块] 发生了 [变化]，[影响说明]`
+
+### 15.4 完成工作后的同步步骤
+
+1. 更新对应 PLAN.md 的状态（把 `[ ]` 改为 `[x]`）
+2. 如果变更影响其他角色，更新 ROADMAP.md
+3. Commit 信息中注明影响范围：`feat(composite): 新增xxx [影响: party-bot, project-bot]`

@@ -30,7 +30,7 @@
 
 按顺序完整阅读以下文件：
 1. `AGENTS.md` — 项目入口，了解全局能力和角色路由
-2. `STANDARDS.md` — 所有铁律和开发规范（**逐条阅读，不可遗漏**）
+2. `STANDARDS.md` — 所有铁律和开发规范（**逐条阅读，特别注意 §十五 知识同步协议**）
 3. `ROADMAP.md` — 当前 Phase、角色分工、模块进度
 4. `bots/_template/AGENTS.md` — PM 角色规范和 Bot 开发流程
 5. `bots/PLAN.md` — Bot 总览
@@ -38,12 +38,20 @@
 7. `composite-skills/PLAN.md` — 已有组合 Skill 清单和待开发列表
 
 读完后，向我汇报：
-- 你理解的当前项目状态
+- 你理解的当前项目状态和各 Phase 完成情况
 - 你的 Bot 的核心场景和验收标准
-- 你需要的组合 Skill 哪些已有、哪些需要新开发
+- 你需要的组合 Skill：哪些已有 ✓、哪些需要新开发
+- PA 侧是否有新的原子 Skill 或框架变更影响你
 - 你今天的任务计划
 
-### 第二步：遵守铁律
+### 第二步：知识同步检查
+
+启动时必须执行（STANDARDS.md §十五）：
+- 检查 `composite-skills/PLAN.md` 是否有其他 PM 新增的 Skill 可用
+- 检查 `framework/PLAN.md` 是否有 PA 的框架变更影响你
+- 如发现变化，主动汇报：`📢 同步报告: [具体变化]，我可以利用 [新能力] 来 [做什么]`
+
+### 第三步：遵守铁律
 
 以下规则贯穿整个工作过程，不可违反：
 
@@ -55,7 +63,7 @@
 6. **不动生产环境**：你只在本地开发和测试，部署由 PA 负责
 7. **不动其他 Bot**：不修改其他 PM 的 Bot 目录
 
-### 第三步：开始工作
+### 第四步：开始工作
 
 根据 `bots/{BOT_NAME}/PLAN.md` 中的场景，按优先级依次开发：
 
@@ -78,9 +86,16 @@
    - 每个场景验证通过后记录结果
 
 4. **交付验收**：
-   - 更新 `bots/{BOT_NAME}/PLAN.md` 状态
    - 告诉我验收完成，等待 PO 验证
-   - PO 验证通过后，由 PA 部署到生产服务器
+   - PO 验证通过后，通知 PA 部署到生产服务器
+
+### 第五步：完成后更新文档（知识同步）
+
+每完成一项工作后必须执行（STANDARDS.md §十五）：
+- **新增组合 Skill** → 更新 `composite-skills/PLAN.md`（标记完成 + 添加说明）
+- **Bot 场景验证通过** → 更新 `bots/{BOT_NAME}/PLAN.md`（标记场景完成）
+- **变更影响其他 PM** → 在 commit 中注明：`[影响: party-bot, project-bot]`
+- 这样下次其他 PM 或你再次启动时，自动发现新能力
 
 ## 组合 Skill 开发规范
 
@@ -110,8 +125,8 @@ export async function xxx(input: XxxInput, deps: CompositeSkillDeps): Promise<Xx
 
 ## Git 规范
 - 分支名：`ai/bot-pm/{BOT_NAME}-<task>`
-- Commit：`<type>(<scope>): <描述> [AI: Codex]`
-- 提交前：跑安全自检
+- Commit：`<type>(<scope>): <描述> [AI: Codex] [影响: xxx]`
+- 提交前：跑安全自检 + 更新 PLAN.md
 
 ---
 
