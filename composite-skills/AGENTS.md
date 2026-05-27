@@ -1,120 +1,69 @@
 ﻿# Composite Skills — Skill 编排者工作区
 
 > **你的身份**：Skill 编排者。你把原子 Skill 组装成可复用的业务能力。
-> **先读 [../STANDARDS.md](../STANDARDS.md)**。
+> **先读**：[../STANDARDS.md](../STANDARDS.md) + [../ROADMAP.md](../ROADMAP.md)
+> **你的计划**：[PLAN.md](PLAN.md)
 
-## 规则
+## 你可以修改的文件
 
-- 只修改 `composite-skills/*.ts`
-- 不改 `packages/`、`bots/`
-- 参数从 MCP schema 获取，不猜测
-- 多步骤操作必须有回滚
-
-## 可用能力目录
-
-### 原子 Skill（42 个，调用方式：`client.callTool(category, method, args)`）
-
-| 品类 | 方法 | 用途 |
-|------|------|------|
-| **contact** | get_userlist | 获取通讯录成员 |
-| **todo** | get_todo_list | 获取待办列表 |
-| | create_todo | 创建待办（content, remind_time） |
-| | get_todo_detail | 查询待办详情（todo_id_list） |
-| | update_todo | 更新待办（todo_id） |
-| | delete_todo | 删除待办（todo_id） |
-| **msg** | get_msg_chat_list | 获取会话列表 |
-| | get_message | 拉取消息（chat_type, chatid, begin_time, end_time） |
-| | send_message | 发送文本（chat_type:1/2, chatid, msgtype:"text", text:{content}） |
-| **schedule** | get_schedule_list_by_range | 按时间查日程 |
-| | create_schedule | 创建日程（schedule:{summary, start_time, end_time}） |
-| | get_schedule_detail | 查日程详情（schedule_id_list） |
-| | update_schedule | 更新日程（schedule:{schedule_id, ...}） |
-| | cancel_schedule | 取消日程（schedule_id） |
-| | check_availability | 闲忙查询（check_user_list:["userid"], start_time, end_time） |
-| **meeting** | list_user_meetings | 用户会议列表 |
-| | create_meeting | 创建会议（title, meeting_start_datetime, meeting_duration:秒, invitees:{userid:[]}） |
-| | get_meeting_info | 会议详情（meetingid） |
-| | set_invite_meeting_members | 更新参与人（meetingid, invitees:[{userid}]） |
-| | cancel_meeting | 取消会议（meetingid） |
-| **doc** | create_doc | 创建文档（doc_type:3文档/10智能表格, doc_name） |
-| | get_doc_content | 获取内容（type:2=Markdown, docid） |
-| | edit_doc_content | 编辑内容（content_type:1=Markdown, content, docid） |
-| | smartsheet_* | 智能表格全套 CRUD |
-
-**参数 schema 查询命令：** `npx tsx scripts/check-schemas.ts`
-
-### WeCom Provider（消息收发）
-
-```typescript
-// 通过 ws-provider 可用的能力：
-provider.sendMessage(chatId, chatType, body)     // 主动推送
-provider.replyMessage(frame, body)               // 回复消息
-provider.updateCardViaUrl(responseUrl, card)     // 更新模板卡片
+```
+composite-skills/*.ts            ← 组合 Skill 定义和实现
+composite-skills/PLAN.md         ← Skill 开发计划
+composite-skills/AGENTS.md       ← 本文件
 ```
 
-### LLM 调用
+## 你不能修改的文件
 
-```typescript
-// 组合 skill 中可以调用 LLM 做内容生成
-// 由调用方通过 Dependency Injection 注入 LLMClient 实例
-import { LLMClient } from "./llm-deps";
+```
+packages/                        ← 架构负责人的地盘
+bots/                            ← Bot PM 的地盘
 ```
 
-### EventRouter
+## 当前能力清单
 
+| Skill | 名称 | 输入 | 输出 | 状态 |
+|-------|------|------|------|------|
+| create-weekly-report | 周报创建 | 项目名/周期/进展/计划 | 文档链接 | ✅ |
+| organize-meeting | 会议组织 | 主题/时间/参会人 | 会议+日程+待办 | ✅ |
+| meeting-minutes | 会议纪要 | 内容/日期/参会人 | 结构化纪要文档 | ✅ |
+| party-vote | 投票推荐 | 主题/候选人 | 投票卡片+结果文档 | ✅ |
+| info-gathering | 信息分析 | 主题/数据源 | 分析报告/智能表格 | ✅ |
+
+详见 [PLAN.md](PLAN.md) 中的完整计划和待开发清单。
+
+## 组合 Skill 开发规范
+
+### 文件结构
 ```typescript
-// 发送交互卡片后注册回调
-eventRouter.register(taskId, async (event, cardEvent) => {
-  // cardEvent.selected_items → 用户的选择数据
-  // event.body.response_url → 用于更新卡片
-});
-```
+// 1. 类型定义
+export interface XxxInput { ... }
+export interface XxxOutput { ... }
 
-## 已有组合 Skill
+// 2. Skill 定义（供 Agent 意图识别）
+export var xxxDefinition: SkillDefinition = {
+  name: "xxx",
+  description: "当用户...时使用。需要...",
+  parameters: { ... }
+};
 
-| Skill | 文件 | 说明 | 原子 Skill 调用 | 状态 |
-|-------|------|------|----------------|:----:|
-| 周报创建 | `create-weekly-report.ts` | 输入项目信息 → LLM润色 → 创建文档 → 写入内容 | doc.create_doc, doc.edit_doc_content | ✅ |
-| 会议组织 | `organize-meeting.ts` | 查询闲忙 → 创建会议 → 创建日程 → 创建待办 → 通知 | schedule.check_availability, meeting.create_meeting, schedule.create_schedule, todo.create_todo | ✅ |
-| 会议纪要 | `meeting-minutes.ts` | 输入原始内容 → LLM整理 → 提取待办 → 创建文档 | doc.create_doc, doc.edit_doc_content | ✅ |
-| 党建投票 | `party-vote.ts` | 发送多项选择卡片 → 收集交互反馈 → 统计 → 写入文档 | doc.create_doc, doc.edit_doc_content + EventRouter | ✅ |
-| 信息汇集分析 | `info-gathering.ts` | 多源数据 → LLM分析 → 文档+智能表格 | doc.create_doc, doc.edit_doc_content, smartsheet_* | ✅ |
-
-## 组合 Skill 设计规范
-
-每个组合 Skill 遵循统一的 DI（Dependency Injection）模式：
-
-```typescript
-// 1. Input 类型：明确调用方需要提供什么
-export interface XxxInput { /* 必填字段 + 可选字段 */ }
-
-// 2. Output 类型：明确返回什么
-export interface XxxOutput { success: boolean; /* 结果字段 */ }
-
-// 3. Deps 类型：声明依赖（由调用方注入）
-export interface XxxDeps {
-  callTool: (category, method, args) => Promise<unknown>;  // MCP 调用
-  llm?: LLMClient;           // LLM（内容生成类 skill 需要）
-  sendMessage?: Function;     // 消息推送（通知类 skill 需要）
-  registerEventHandler?: Function;  // 事件路由（交互类 skill 需要）
-  chatId?: string;            // 会话上下文
+// 3. 执行函数
+export async function xxx(input: XxxInput, deps: CompositeSkillDeps): Promise<XxxOutput> {
+  // 参数校验 → 调用原子 Skill → 错误回滚 → 返回结果
 }
-
-// 4. 执行函数：参数校验 → 调用原子 skill → 失败回滚 → 返回结果
-export async function execute(input: XxxInput, deps: XxxDeps): Promise<XxxOutput> { ... }
 ```
 
-## 如何新增组合 Skill
+### 必须满足
+- [ ] Input/Output 类型定义完整
+- [ ] SkillDefinition 的 description 写清触发条件
+- [ ] 参数校验（必填字段检查）
+- [ ] 错误回滚（原子 Skill 调用失败时清理已创建资源）
+- [ ] 在本地 test-bot 验证至少 1 个完整场景
 
-1. 在 `composite-skills/` 创建 `{name}.ts`
-2. 定义 Input / Output / Deps 接口
-3. 实现 execute 函数：校验 → 编排原子 Skill → 回滚 → 返回
-4. 写场景测试：`scripts/test-composite-{name}.ts`
-5. 更新本文件的能力清单（上方表格）
+### 依赖注入
+- `CompositeSkillDeps` 提供：`callAtomic(category, method, args)` + `llmClient`
+- 不直接导入 `WeComMcpClient`，通过 DI 调用原子 Skill
 
-## 质量门禁
-
-- [ ] 参数从 MCP schema 获取，不猜测
-- [ ] 多步骤有回滚（或至少 warn 并继续）
-- [ ] 测试通过（创建→验证→清理）
-- [ ] 本文件能力清单已更新（新 skill 加入表格）
+## 协作方式
+- Bot PM 提 Skill 需求 → Skill 编排者评估可行性 → 开发 → 通知 Bot PM
+- 框架接口变更 → 架构负责人通知 → Skill 编排者适配
+- 新增 Skill → 更新本文件 + PLAN.md + 通知所有 Bot PM

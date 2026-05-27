@@ -2,60 +2,69 @@
 
 ## 开发模式
 
-本项目采用 **Vibecoding** 模式：人类定义需求和审查设计，AI（Codex 等工具）负责编码和测试。
+本项目采用 **Vibecoding** 模式：人类定义需求和审查设计，AI（Codex、CloudCode、Cursor 等）负责编码和测试。
+
+## 多工具兼容
+
+本项目规范文件全部使用纯 Markdown，不依赖任何特定 AI 工具。无论你用什么工具：
+1. 工具进入项目后，首先读取 `AGENTS.md` → 自动路由到对应角色
+2. 遵守 `STANDARDS.md` 中的铁律和规范
+3. 通过 `ROADMAP.md` 了解全局进度
+4. 通过 `{模块}/PLAN.md` 了解自己的任务
+5. 通过 `{模块}/AGENTS.md` 了解自己的边界
 
 ## 角色体系
-
-开发前请先阅读对应目录的 `AGENTS.md`，明确你的角色边界：
 
 | 角色 | AGENTS.md | 可以改 | 不能碰 |
 |------|-----------|--------|--------|
 | 架构负责人 | `framework/AGENTS.md` | `packages/` | `bots/` `composite-skills/` |
 | Skill 编排者 | `composite-skills/AGENTS.md` | `composite-skills/` | `packages/` `bots/` |
-| Bot PM | `bots/_template/AGENTS.md` | `bots/{name}/config.json` + `agent.md` | `packages/` |
+| Bot PM | `bots/_template/AGENTS.md` | 自己 Bot 的 `config.json` + `agent.md` | 其他 Bot 目录、`packages/` |
 | 测试负责人 | `scripts/tests/AGENTS.md` | `scripts/tests/` | `packages/` |
 
-## 分支策略（GitHub Flow）
+**跨角色边界不可逾越**。需要跨角色协作时：
+- Bot PM 需要新 Skill → 向 Skill 编排者提需求，不自己写
+- Skill 编排者需要框架变更 → 向架构负责人提需求
+- 所有协调通过 GitHub Issue 或 ROADMAP.md 进行
+
+## 分支策略
 
 ```
 main           ← 生产就绪，只接受 PR 合入
-  ├─ develop   ← 集成分支，日常开发合入这里
-  │   ├─ feature/xxx   ← 新功能分支
-  │   ├─ fix/xxx       ← 缺陷修复
-  │   └─ skill/xxx     ← 新增 Skill
-  └─ release/v1.x  ← 发布分支
+  ├─ develop   ← 集成分支
+  │   ├─ feature/<描述>   ← 新功能
+  │   ├─ fix/<描述>       ← 缺陷修复
+  │   ├─ skill/<名称>     ← 新增 Skill
+  │   └─ bot/<名称>       ← 新增 Bot
+  └─ release/v<版本>      ← 发布分支
 ```
 
-### 分支命名
-
-- `feature/<描述>` — 新功能（如 `feature/feishu-provider`）
-- `fix/<描述>` — 缺陷修复（如 `fix/meeting-invitees-format`）
-- `skill/<skill名>` — 新增 Skill（如 `skill/weekly-report`）
-- `bot/<bot名>` — 新增 Bot 实例（如 `bot/project-bot`）
-- `docs/<描述>` — 文档更新
-
-### AI 开发者分支约定
-
-当 AI 工具（Codex 等）进行开发时，建议使用分支名格式：
-
+### AI 开发者分支命名
 ```
 ai/<role>/<task>
 ```
+- `ai/architect/add-provider`
+- `ai/skill-dev/create-weekly-report`
+- `ai/bot-pm/party-bot`
 
-例如：`ai/skill-dev/create-weekly-report`、`ai/architect/add-feishu-provider`
+## 开发流程
+
+```
+需求讨论 → 本地 test-bot 开发 → 全量测试通过 → 人工验证 → 生产部署
+```
+
+1. **需求讨论**（人工参与）：明确场景、方案、验收标准，更新对应 PLAN.md
+2. **本地开发**（AI 为主）：使用 test-bot + 本地服务，跑通所有测试
+3. **测试验证**：`npx vitest run` + 集成测试 + 场景测试
+4. **人工验证**：在企业微信中实际交互验证效果
+5. **生产部署**：创建正式 Bot 凭据 → Docker 部署 → 验收
 
 ## 提交规范
-
-使用 [Conventional Commits](https://www.conventionalcommits.org/)：
 
 ```
 <type>(<scope>): <描述>
 
-feat(agent): 添加意图识别缺失追问逻辑
-fix(meeting): 修正 create_meeting invitees 格式为字典
-test(composite): 新增组织会议组合 Skill 测试
-docs(standards): 新增安全管理章节
-refactor(bot-manager): 提取 CompositeSkill 注册逻辑
+[AI: <tool>]
 ```
 
 类型：`feat` `fix` `test` `docs` `refactor` `chore` `security`
@@ -63,30 +72,30 @@ refactor(bot-manager): 提取 CompositeSkill 注册逻辑
 ## PR 流程
 
 1. 从 `develop` 创建功能分支
-2. 开发 + 本地测试通过（`npx vitest run`）
+2. 开发 + 本地测试通过
 3. 提交 PR 到 `develop`
-4. PR 必须满足的检查：
+4. PR 检查清单：
    - [ ] 单元测试 100% 通过
    - [ ] 新增功能有对应测试
    - [ ] 无硬编码凭据（运行安全自检）
-   - [ ] 相关 AGENTS.md / STANDARDS.md / DESIGN.md 已更新
+   - [ ] 相关 AGENTS.md / PLAN.md / STANDARDS.md / DESIGN.md 已更新
    - [ ] 未跨角色边界修改文件
+   - [ ] Commit 格式正确
 5. 至少一人 Review 后合入
+
+## 多开发者并行
+
+当多人同时开发不同模块时：
+- **Bot PM A** 开发 `party-bot` → 只看 `bots/party-bot/` + `composite-skills/PLAN.md`（了解可用 Skill）
+- **Bot PM B** 开发 `project-bot` → 只看 `bots/project-bot/`
+- **Skill 编排者** 开发新组合 Skill → 只看 `composite-skills/`
+- **架构负责人** 维护框架 → 只看 `packages/` + `framework/`
+- 所有人通过 `ROADMAP.md` 了解彼此进度
+- 代码冲突通过 Git 正常解决，合入时跑全量测试
 
 ## 安全自检
 
-提交前运行：
-
 ```bash
-# 检查硬编码凭据
-grep -r "sk-[a-zA-Z0-9]\{20,\}" packages/ scripts/ --include="*.ts"
-
-# 检查环境变量引用
-grep -r "process\.env" packages/ --include="*.ts" | wc -l
+# 提交前运行
+grep -r "sk-[a-zA-Z0-9]\{20,\}" packages/ scripts/ --include="*.ts" && echo "❌ 发现疑似 API Key" || echo "✅ 无硬编码凭据"
 ```
-
-## AI 生成代码的特殊要求
-
-- AI 必须在提交信息中标注生成方式：`[AI: Codex] feat(composite): 新增信息汇集分析 Skill`
-- AI 生成的代码必须经过人类 Review 后才能合入 `main`
-- AI 不得修改 `STANDARDS.md` 中的铁律条款（仅人类架构负责人可修改）

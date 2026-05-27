@@ -281,3 +281,157 @@ grep -r "secret\|password\|token" packages/ --include="*.ts" | grep -v "process.
 | 腾讯会议 API | 待调研 | — | — |
 
 新增待评估项时，参考上述格式记录到本表。
+
+---
+
+## 十、跨工具协作规范（多 AI 开发工具兼容）
+
+本项目支持多种 AI 开发工具并行开发（Codex、CloudCode、Cursor 等），以下规则保证兼容性。
+
+### 10.1 文件格式
+- 所有规范文件使用 **纯 Markdown**（`.md`），不依赖任何工具特定语法
+- 禁止在 AGENTS.md/PLAN.md/STANDARDS.md 中使用工具特定指令（如 `@codex`、`!cloudcode`、`::tool-call`）
+- 行为规则用「做什么」描述，不指定「用哪个工具怎么做」
+- 文件编码：UTF-8 without BOM
+
+### 10.2 角色路由（AGENTS.md 体系）
+```
+项目根 AGENTS.md         ← 任何 AI 工具进入项目的第一入口
+  ├── 角色路由表          ← AI 根据任务类型自动找到自己的 AGENTS.md
+  ├── framework/AGENTS.md ← 架构负责人角色
+  ├── composite-skills/AGENTS.md ← Skill 编排者角色
+  ├── bots/_template/AGENTS.md   ← Bot PM 角色
+  └── scripts/tests/AGENTS.md    ← 测试负责人角色
+```
+
+### 10.3 计划路由（PLAN.md 体系）
+```
+ROADMAP.md              ← 全局路线图（所有人必读）
+  ├── framework/PLAN.md
+  ├── composite-skills/PLAN.md
+  ├── bots/PLAN.md      ← Bot 总览
+  │   ├── bots/test-bot/PLAN.md
+  │   ├── bots/party-bot/PLAN.md
+  │   └── bots/project-bot/PLAN.md
+  └── 各模块 AGENTS.md  → 引用对应的 PLAN.md
+```
+
+### 10.4 AI 工具进入项目后的标准流程
+1. 读取 `AGENTS.md` → 了解项目能力 + 确定自己角色
+2. 读取 `STANDARDS.md` → 了解铁律和规范
+3. 读取 `ROADMAP.md` → 了解全局进度
+4. 读取对应模块的 `AGENTS.md` → 了解角色边界
+5. 读取对应模块的 `PLAN.md` → 了解当前任务
+6. 开始工作
+
+### 10.5 代码合并兼容性
+- 不同 AI 工具生成的代码必须通过同样的测试（`npx vitest run`）
+- 所有代码提交前必须运行安全自检（§七.7.7）
+- PR 合入前必须通过所有测试 + 人类 Review
+- 常见不兼容问题预防：
+  - 禁止使用工具特定的代码注释或标记
+  - 禁止在源代码中写入工具名称或版本信息
+  - 不同工具对 `var`/`let`/`const` 的处理可能不同 — 本项目统一使用 `var`
+
+---
+
+## 十一、分支命名与 Commit 规范
+
+### 11.1 分支策略（GitHub Flow）
+```
+main           ← 生产就绪，只接受 PR 合入
+  ├─ develop   ← 集成分支，日常开发合入这里
+  │   ├─ feature/<描述>   ← 新功能
+  │   ├─ fix/<描述>       ← 缺陷修复
+  │   ├─ skill/<名称>     ← 新增 Skill
+  │   └─ bot/<名称>       ← 新增 Bot
+  └─ release/v<版本>      ← 发布分支
+```
+
+### 11.2 AI 开发者分支约定
+```
+ai/<role>/<task>
+```
+示例：
+- `ai/architect/add-feishu-provider`
+- `ai/skill-dev/create-weekly-report`
+- `ai/bot-pm/party-bot-agent`
+- `ai/tester/regression-p4`
+
+### 11.3 Commit 格式（Conventional Commits）
+```
+<type>(<scope>): <描述>
+
+[AI: <tool>]
+```
+类型：`feat` | `fix` | `test` | `docs` | `refactor` | `chore` | `security`
+
+示例：
+```
+feat(composite): 新增党建新闻稿生成 Skill
+[AI: Codex]
+
+fix(meeting): 修正 invitees 格式为字典
+[AI: CloudCode]
+```
+
+### 11.4 提交前检查清单
+- [ ] 运行 `npx vitest run`（全部通过）
+- [ ] 运行安全自检（无硬编码凭据）
+- [ ] Commit message 格式正确
+- [ ] 未跨角色边界修改文件
+- [ ] 相关 PLAN.md 状态已更新
+
+---
+
+## 十二、版本号规范（SemVer）
+
+### 12.1 格式
+```
+v<MAJOR>.<MINOR>.<PATCH>
+```
+
+### 12.2 变更规则
+| 变更类型 | 版本号变化 | 示例 |
+|---------|-----------|------|
+| Bug 修复 | PATCH +1 | v0.2.0 → v0.2.1 |
+| 新功能（向后兼容） | MINOR +1, PATCH 归零 | v0.2.0 → v0.3.0 |
+| 破坏性变更 | MAJOR +1, MINOR/PATCH 归零 | v0.2.0 → v1.0.0 |
+
+### 12.3 破坏性变更定义
+- 修改 Provider 接口（影响所有 bot）
+- 修改 SkillDefinition 类型
+- 修改 config.json 格式
+- 删除已有 Skill
+- 修改环境变量名称
+
+### 12.4 版本记录位置
+- `package.json` 的 `version` 字段
+- `ROADMAP.md` 的「当前版本」和「版本历史」
+- Git tag：`git tag v0.2.0`
+
+---
+
+## 十三、计划体系与协作架构
+
+### 13.1 三层计划
+```
+ROADMAP.md              ← 全局层：Phase 进度、模块负责人、工具
+  └── {模块}/PLAN.md    ← 模块层：模块级任务、依赖关系
+      └── {Bot}/PLAN.md ← Bot 层：Bot 级场景、验收标准
+```
+
+### 13.2 各层职责
+| 层 | 文件 | 维护者 | 读者 |
+|----|------|--------|------|
+| 全局 | ROADMAP.md | 架构负责人 | 所有人 |
+| 模块 | framework/PLAN.md | 架构负责人 | 架构负责人 + Bot PM（了解依赖） |
+| 模块 | composite-skills/PLAN.md | Skill 编排者 | Skill 编排者 + Bot PM |
+| 模块 | bots/PLAN.md | Bot PM 协调 | 所有 Bot PM |
+| Bot | bots/{name}/PLAN.md | 该 Bot 的 PM | 该 Bot 的 PM + 架构负责人（了解进度） |
+
+### 13.3 信息隔离原则
+- Bot PM 只需知道其他 Bot **在做什么**（通过 ROADMAP.md），不需了解**怎么做**（不读其他 Bot 的 PLAN.md）
+- 框架/Skill 开发者**不知道具体 Bot 的场景**，只提供通用能力
+- 跨角色协调通过 ROADMAP.md 的「依赖」列声明
+- 变更通知：模块变更 → 更新 ROADMAP.md → 通知受影响角色的负责人
