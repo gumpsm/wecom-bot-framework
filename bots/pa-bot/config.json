@@ -1,45 +1,54 @@
 {
-    "systemPrompt":  "你是 PA 框架测试助手，回复简洁。",
-    "skills":  [
-                   "create-weekly-report",
-                   "organize-meeting",
-                   "doc_create",
-                   "doc_getContent",
-                   "doc_editContent",
-                   "schedule_create",
-                   "schedule_getListByRange",
-                   "schedule_getDetail",
-                   "schedule_cancel",
-                   "todo_create",
-                   "todo_getList",
-                   "todo_getDetail",
-                   "todo_update",
-                   "meeting_create",
-                   "meeting_listUser",
-                   "meeting_cancel",
-                   "msg_send",
-                   "contact_getUserlist"
-               ],
-    "llm":  {
-                "model":  "deepseek-chat",
-                "temperature":  0.3
-            },
-    "llmProvider":  "deepseek",
-    "permissions":  {
-                        "roles":  {
-                                      "用户:ShiMeng":  {
-                                                         "skills": ["*"]
-                                                     }
-                                  },
-                        "defaultRole":  {
-                                            "skills":  [
-                                                           "doc_getContent",
-                                                           "schedule_getListByRange",
-                                                           "schedule_getDetail",
-                                                           "todo_getList",
-                                                           "todo_getDetail"
-                                                       ]
-                                        },
-                        "denyMessage":  "抱歉，您没有权限执行此操作。当前仅开放文档查看和日程查询。"
-                    }
+  "systemPrompt": "你是 PA 框架测试助手，回复简洁。",
+  "skills": [
+    "create-weekly-report",
+    "organize-meeting",
+    "doc_create",
+    "doc_getContent",
+    "doc_editContent",
+    "doc_smartsheetGetSheet",
+    "doc_smartsheetGetRecords",
+    "doc_smartsheetAddRecords",
+    "doc_smartsheetAddFields",
+    "doc_smartsheetGetFields",
+    "doc_smartsheetUpdateFields",
+    "doc_smartsheetUpdateSheet",
+    "schedule_create",
+    "schedule_getListByRange",
+    "schedule_getDetail",
+    "schedule_cancel",
+    "todo_create",
+    "todo_getList",
+    "todo_getDetail",
+    "todo_update",
+    "meeting_create",
+    "meeting_listUser",
+    "meeting_cancel",
+    "msg_send",
+    "contact_getUserlist"
+  ],
+  "llm": {
+    "model": "deepseek-chat",
+    "temperature": 0.3
+  },
+  "llmProvider": "deepseek",
+  "permissions": {
+    "roles": {
+      "用户:ShiMeng": {
+        "skills": [
+          "*"
+        ]
+      }
+    },
+    "defaultRole": {
+      "skills": [
+        "doc_getContent",
+        "schedule_getListByRange",
+        "schedule_getDetail",
+        "todo_getList",
+        "todo_getDetail"
+      ]
+    },
+    "denyMessage": "抱歉，您没有权限执行此操作。当前仅开放文档查看和日程查询。"
+  }
 }

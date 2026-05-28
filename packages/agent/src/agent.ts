@@ -28,7 +28,7 @@ export class Agent {
     var userStr = userId ? '\n当前对话用户 userid: ' + userId + '。' : '';
     var casualRule = '\n你可以简单回应问候和日常寒暄（如"你好""辛苦了""谢谢"），但应自然地将对话引导回你的核心职能。';
     var noIdRule = '\n重要：永远不要向用户展示原始系统ID（如todo_id、schedule_id、docid、meetingid等长字符串）。用序号或简短标题替代。例如：不要说"日程ID: 4aa82b6c..."，直接说"下午3点 集成测试"。';
-    var detailRule = '\n查询日程时schedule_get_list只返回ID列表，需进一步调用schedule_get_detail（参数schedule_id_list数组）获取标题和时间。查询待办时todo_get_list返回索引不含content，需调用todo_get_detail（参数todo_id_list数组）获取内容。批量传多个ID可减少调用次数。';
+    var detailRule = '\n查询日程时schedule_getListByRange只返回ID列表，需进一步调用schedule_getDetail（参数schedule_id_list数组）获取标题和时间。查询待办时todo_getList返回索引不含content，需调用todo_getDetail（参数todo_id_list数组）获取内容。批量传多个ID可减少调用次数。';
     return timeStr + userStr + '\n' + this.config.systemPrompt + casualRule + noIdRule + detailRule;
   }
 
@@ -97,18 +97,40 @@ export class Agent {
         }
 
         // 第二次 LLM 调用：基于工具结果生成最终回复
-        var finalResponse = await this.config.llmClient.chat({
-          messages: history,
-          systemPrompt: systemPrompt,
-        });
+        var maxRounds = 3;
+        var finalResponse;
+        for (var round = 0; round < maxRounds; round++) {
+          finalResponse = await this.config.llmClient.chat({
+            messages: history,
+            tools,
+            systemPrompt: systemPrompt,
+          });
+          if (!finalResponse.toolCalls || finalResponse.toolCalls.length === 0) break;
+          history.push({ role: 'assistant', content: null, tool_calls: finalResponse.toolCalls });
+          for (var tc of finalResponse.toolCalls) {
+            var tcArgs = JSON.parse(tc.function.arguments);
+            try {
+              var tcResult = await this.config.skillRegistry.execute(tc.function.name, tcArgs);
+              history.push({ role: 'tool', tool_call_id: tc.id, content: JSON.stringify(tcResult) });
+            } catch (err) {
+              history.push({ role: 'tool', tool_call_id: tc.id, content: JSON.stringify({ error: (err as Error).message }) });
+            }
+          }
+        }
 
         var reply = finalResponse.content ?? '抱歉，我无法处理这个请求。';
+        if (reply.includes('<⚛') || reply.includes('<invoke') || reply.includes('<tool_calls')) {
+          reply = '抱歉，服务暂时不可用，请稍后再试。';
+        }
         history.push({ role: 'assistant', content: reply });
         return reply;
       }
 
       // LLM 直接回复（不需要工具）
       var reply = response.content ?? '抱歉，我暂时无法回复。';
+      if (reply.includes('<⚛') || reply.includes('<invoke') || reply.includes('<tool_calls')) {
+        reply = '抱歉，服务暂时不可用，请稍后再试。';
+      }
       history.push({ role: 'assistant', content: reply });
       return reply;
 

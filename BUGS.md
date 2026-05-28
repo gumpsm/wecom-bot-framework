@@ -19,7 +19,17 @@
 | 2026-05-28 | mcp-skill-provider.ts | DeepSeek 合并重复词：schedule_get_schedule_detail → schedulegetschedule_detail，工具调用失败 | Skill 名中品类词和方法名重复，LLM tokenizer 合并 _ 分隔符 | CamelCase 重构：schedule_getDetail（仅1个_，方法内部 CamelCase，去掉重复品类词） | 所有 PM |
 ---
 
-## 待修复
+## 已修复
+
+| 2026-05-28 | bot-manager.ts | config.llm.model 配置被忽略，所有 Bot 共用全局模型 | startBot() 中 llmClient 始终用 this.llmClient，不读 config.llm | 新增 getBotLlmClient()，检测 config.llm.model 并创建专用 LLMClient | 所有 PM |
+| 2026-05-28 | agent.ts | detailRule 中 skill 名不匹配实际CamelCase命名 | 复合Skill命名重构后schedule_get_list→schedule_getListByRange | 更新 detailRule 中的实际 skill 名 | 所有 PM |
+| 2026-05-28 | agent.ts | DeepSeek 间歇性输出原始 XML (<invoke>)而非结构化 tool_call | 直接回复路径未过滤 | 检测 reply 中的<⚛/<invoke/<tool_calls>，替换为友好提示 | 所有 PM |
+
+已修复
+
+| 2026-05-28 | agent.ts | 日程/待办查询返回原始 XML (<⚛>)，<invoke> 标签直接暴露给用户 | 第二次 LLM 调用未传 tools参数，LLM无法结构化调用getDetail | 第二次调用传入 tools + 多轮循环（最多3轮）, 2处 XML 过滤做安全兜底 | 所有 PM |
+
+待修复
 
 （暂无）
 
