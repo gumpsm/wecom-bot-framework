@@ -1,54 +1,61 @@
-﻿# 项目 Bot 开发计划
+# ��Ŀ Bot �����ƻ�
 
-> Bot PM：待指定 | 工具：任意 AI 开发工具 | 凭据：待获取
+> Bot PM����ָ�� | ���ߣ����� AI �������� | ƾ�ݣ�����ȡ
 
-## 目标
-专业项目管理助手，服务于项目经理和团队成员。
+## Ŀ��
+רҵ��Ŀ�������֣���������Ŀ�������Ŷӳ�Ա��
 
-## 核心场景（优先级排序）
+## ���ĳ��������ȼ�����
 
-### 场景 1：组织项目会议（P0）
-- **触发**：「开会」「组织会议」「安排评审」
-- **流程**：确认主题→时间→参会人→时长 → `organize-meeting`
-- **验收**：用户说「明天下午3点组织项目评审会」，Bot 追问参会人后创建会议+日程+待办
-- **依赖 Skill**：`organize-meeting`（已有）
+### ���� 1����֯��Ŀ���飨P0��
+- **����**�������᡹����֯���项����������
+- **����**��ȷ�������ʱ����λ��ˡ�ʱ�� �� `organize-meeting`
+- **����**���û�˵����������3����֯��Ŀ����᡹��Bot ׷�ʲλ��˺󴴽�����+�ճ�+����
+- **���� Skill**��`organize-meeting`�����У�
 
-### 场景 2：撰写项目周报（P0）
-- **触发**：「周报」「本周进展」「项目汇报」
-- **流程**：收集进展/计划/风险 → `create-weekly-report` 生成
-- **依赖 Skill**：`create-weekly-report`（已有）
+### ���� 2��׫д��Ŀ�ܱ���P0��
+- **����**�����ܱ��������ܽ�չ������Ŀ�㱨��
+- **����**���ռ���չ/�ƻ�/���� �� `create-weekly-report` ����
+- **���� Skill**��`create-weekly-report`�����У�
 
-### 场景 3：整理会议纪要（P0）
-- **触发**：「纪要」「会议记录」
-- **流程**：接收内容 → `meeting-minutes` 提取待办 + 生成结构化纪要
-- **依赖 Skill**：`meeting-minutes`（已有）
+### ���� 3�����������Ҫ��P0��
+- **����**������Ҫ���������¼��
+- **����**���������� �� `meeting-minutes` ��ȡ���� + ���ɽṹ����Ҫ
+- **���� Skill**��`meeting-minutes`�����У�
 
-### 场景 4：项目信息汇总（P1）
-- **触发**：「项目进展」「汇总分析」
-- **流程**：收集多源数据 → `info-gathering` 生成报告
-- **依赖 Skill**：`info-gathering`（已有）
+### ���� 4����Ŀ��Ϣ���ܣ�P1��
+- **����**������Ŀ��չ�������ܷ�����
+- **����**���ռ���Դ���� �� `info-gathering` ���ɱ���
+- **���� Skill**��`info-gathering`�����У�
 
-### 场景 5：待办管理（P1）
-- **触发**：「待办」「任务」「分配」
-- **流程**：确认内容/负责人/截止日期 → `todo.create_todo`
-- **依赖 Skill**：`todo.create_todo`（已有原子 Skill）
+### ���� 5�����������P1��
+- **����**�������졹�����񡹡����䡹
+- **����**��ȷ������/������/��ֹ���� �� `todo_create`
+- **���� Skill**��`todo_create`������ԭ�� Skill��
 
-### 场景 6：项目状态报告（P2）
-- **触发**：「项目状态」「进度报告」
-- **流程**：汇总待办+日程+文档 → LLM 生成综合报告
-- **需新增组合 Skill**：`project-status-report`（见 composite-skills/PLAN.md）
+### ���� 6����Ŀ״̬���棨P2��
+- **����**������Ŀ״̬�������ȱ��桹
+- **����**�����ܴ���+�ճ�+�ĵ� �� LLM �����ۺϱ���
+- **��������� Skill**��`project-status-report`���� composite-skills/PLAN.md��
 
-## 当前任务
-- [ ] 等待 `project-status-report` 组合 Skill 开发完成
-- [ ] 编写 agent.md
-- [ ] 配置 config.json skills 列表
-- [ ] 本地 pa-bot 验证 5 个场景
-- [ ] 获取正式 Bot 凭据 → 部署
+## ��ǰ����
+- [x] �ȴ� `project-status-report` ��� Skill ������ɣ��ļ��Ѵ������� PA ע�ᣩ
+- [x] ��д agent.md
+- [x] cron-scheduler / project-init / project-close �������
+- [x] config.json �����б�+Ȩ������
+- [x] ���� config.json skills �б�
+- [x] P1: meeting-reminder + meeting-minutes��ǿ + create-weekly-report��ǿ
+- [x] P1: agent.md ����ȫ���̣���ͻ���+ȷ�Ϸֲ�+��ǰ����+��Ҫ���ƻ�����
+- [x] P2: project-report + cron-scheduler��ǿ + project-init���ɶ�ʱ����
+- [x] P3: project-registry + project-matrix ����Ŀ��ͼ
+- [x] P4: project-handover ��Ա���ӣ���ͻ���+ȷ�Ϸֲ�+��ǰ����+��Ҫ���ƻ�����
+- [ ] ���� pa-bot ��֤ 5 ������
+- [ ] ��ȡ��ʽ Bot ƾ�� �� ����
 
-## 依赖
-- composite-skills: `project-status-report`（待开发）
-- composite-skills: `organize-meeting`、`create-weekly-report`、`meeting-minutes`、`info-gathering`（已完成）
+## ����
+- composite-skills: `project-status-report`����������
+- composite-skills: `organize-meeting`��`create-weekly-report`��`meeting-minutes`��`info-gathering`������ɣ�
 - framework: v0.2.0+
 
-## 不关心
-- party-bot 的具体场景和开发进度
+## ������
+- party-bot �ľ��峡���Ϳ�������

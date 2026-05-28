@@ -1,4 +1,4 @@
-﻿# PM（项目经理）— Session 启动提示词
+# PM（项目经理）— Session 启动提示词
 
 > 复制以下全部内容，粘贴到新的 AI 开发工具 Session 中。
 > **注意**：将 `{BOT_NAME}` 替换为你要开发的 Bot 名称（如 `party-bot`、`project-bot`）。
@@ -77,6 +77,46 @@
    - 已有组合 Skill 不够用 → 自己开发新的（在 `composite-skills/` 下）
    - 需要新的原子 Skill → 告诉我，我转交给 PA
 
+
+### 第三步半：配置权限控制
+
+技能开发完成后，必须配置权限：谁 → 能调用哪些 Skill。
+
+1. **查看技能目录**：运行 
+px tsx scripts/list-skills.ts {BOT_NAME}
+   获取当前 Bot 所有技能的中文说明，复制备用。
+
+2. **选择权限方式**（PA 会提示你）：
+
+   方式1️⃣ — 企微通讯录直接映射（推荐首选）
+     适用：角色能从部门/岗位/标签说清楚
+     需要：让 PO 提供「哪个部门/岗位/标签 → 能用哪些技能」
+     配置：直接在 config.json 中写
+     示例：
+     "标签:支部委员": { "skills": ["*"] }
+     "标签:党员":     { "skills": ["party-vote", "doc_getContent"] }
+
+   方式2️⃣ — 固定角色映射表
+     适用：有非正式角色（支部委员等），但角色-人员关系固定
+     需要：让 PO 提供一张智能表格，表头：姓名 | 部门 | 角色
+     配置：在 config.json 的 permissions.roleSource.sheets 中引用
+
+   方式3️⃣ — Bot 使用者自行维护
+     适用：多项目/多团队，角色动态变化
+     配置：定义角色→技能映射，roleSource 中的 docid 留空
+
+3. **写入 config.json**：
+   "permissions": {
+     "roles": {
+       "标签:支部委员": { "skills": ["*"] },
+       "标签:党员":     { "skills": ["party-vote", "doc_getContent"] }
+     },
+     "defaultRole": { "skills": [] },
+     "denyMessage": "抱歉，您没有权限执行此操作。"
+   }
+
+4. **本地测试权限**：用不同身份的用户（如普通党员 vs 支部委员）分别测试，
+   确认权限拦截生效。
 3. **本地测试**：使用 pa-bot 验证
    - 启动本地服务：`npx tsx packages/server/src/index.ts`
    - 在企业微信中与 pa-bot 交互，验证至少 3 个场景：

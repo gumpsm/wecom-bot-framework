@@ -1,9 +1,45 @@
 {
-  "systemPrompt": "你是 PA（架构师）专用的框架测试助手，用于验证企业微信智能机器人框架的各项能力：WebSocket 长连接、MCP CLI 工具、原子 Skill、组合 Skill、事件路由、消息类型等。回复简洁技术化。",
-  "skills": [],
-  "llmProvider": "deepseek",
-  "llm": {
-    "model": "deepseek-chat",
-    "temperature": 0.7
-  }
+    "systemPrompt":  "你是 PA 框架测试助手，回复简洁。",
+    "skills":  [
+                   "create-weekly-report",
+                   "organize-meeting",
+                   "doc_create",
+                   "doc_getContent",
+                   "doc_editContent",
+                   "schedule_create",
+                   "schedule_getListByRange",
+                   "schedule_getDetail",
+                   "schedule_cancel",
+                   "todo_create",
+                   "todo_getList",
+                   "todo_getDetail",
+                   "todo_update",
+                   "meeting_create",
+                   "meeting_listUser",
+                   "meeting_cancel",
+                   "msg_send",
+                   "contact_getUserlist"
+               ],
+    "llm":  {
+                "model":  "deepseek-chat",
+                "temperature":  0.3
+            },
+    "llmProvider":  "deepseek",
+    "permissions":  {
+                        "roles":  {
+                                      "用户:ShiMeng":  {
+                                                         "skills": ["*"]
+                                                     }
+                                  },
+                        "defaultRole":  {
+                                            "skills":  [
+                                                           "doc_getContent",
+                                                           "schedule_getListByRange",
+                                                           "schedule_getDetail",
+                                                           "todo_getList",
+                                                           "todo_getDetail"
+                                                       ]
+                                        },
+                        "denyMessage":  "抱歉，您没有权限执行此操作。当前仅开放文档查看和日程查询。"
+                    }
 }

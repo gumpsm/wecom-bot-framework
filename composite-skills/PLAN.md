@@ -1,47 +1,63 @@
-﻿# Composite Skills 开发计划
+# Composite Skills �����ƻ�
 
-> 角色：Skill 编排者 | 边界：[AGENTS.md](AGENTS.md)
+> ��ɫ��Skill ������ | �߽磺[AGENTS.md](AGENTS.md)
 
-## 当前版本：5 个组合 Skill（稳定）
+## ��ǰ�汾��5 ����� Skill���ȶ���
 
-## 已完成
-- [x] `create-weekly-report` — 项目周报创建
-- [x] `organize-meeting` — 会议组织（创建会议 + 日程 + 待办）
-- [x] `meeting-minutes` — 会议纪要整理（提取待办 + 分类）
-- [x] `party-vote` — 党建投票推荐（多项选择卡片 + 结果记录）
-- [x] `info-gathering` — 信息汇集分析
+## �����
+- [x] `project-handover` �� ��Ա���ӣ�����Ԥ��+����ת�ƣ�
+- [x] `project-registry` �� ��Ŀע���ܱ�
+- [x] `project-matrix` �� ����Ŀ������ͼ������/��Ա/��̱���
+- [x] `project-report` �� �ձ�/�ܱ�/�±��Զ�����
+- [x] `meeting-reminder` �� ��ǰ���ѣ���װ cron-scheduler��
+- [x] `cron-scheduler` �� ͨ�ö�ʱ������������ PA �ᵽ��ܲ㣩
+- [x] `project-init` �� ��Ŀһ������
+- [x] `project-close` �� ��Ŀ��ֹ/����
+- [x] `create-weekly-report` �� ��Ŀ�ܱ�����
+- [x] `organize-meeting` �� ������֯���������� + �ճ� + ���죩
+- [x] `meeting-minutes` ��ǿ �� ֧��д����Ŀ�ƻ�����planDocId��
+- [x] `create-weekly-report` ��ǿ �� ֧�ּ�Ҫ��������
+- [x] `meeting-minutes` �� �����Ҫ��������ȡ���� + ���ࣩ
+- [x] `party-vote` �� ����ͶƱ�Ƽ�������ѡ��Ƭ + �����¼��
+- [x] `info-gathering` �� ��Ϣ�㼯����
 
-## 计划中（按优先级）
+## �ƻ��У������ȼ���
 
-### P4-1: 党建场景（为 party-bot）
-- [ ] `party-news-draft` — 党建新闻稿生成（收集活动信息 → LLM 生成 → 创建文档）
-- [ ] `party-plan-draft` — 党建活动方案生成
-- **依赖**：`doc.create_doc`、`doc.edit_doc_content`（已有原子 Skill）
+### P4-1: ����������Ϊ party-bot��
+- [ ] `party-news-draft` �� �������Ÿ����ɣ��ռ����Ϣ �� LLM ���� �� �����ĵ���
+- [ ] `party-plan-draft` �� �������������
+- **����**��`doc_create`��`doc_editContent`������ԭ�� Skill��
 
-### P4-2: 项目场景（为 project-bot）
-- [ ] `project-status-report` — 项目状态报告（汇总待办 + 日程 + 文档 → 生成报告）
-- **依赖**：`schedule.get_schedule_list_by_range`、`todo.*`、`doc.get_doc_content`
+### P4-2: ��Ŀ������Ϊ project-bot��
+- [x] `project-status-report` �� ��Ŀ״̬���棨���ܴ��� + �ճ� + �ĵ� �� ���ɱ��棩
+- **����**��`schedule_getListByRange`��`todo_*`��`doc_getContent`
 
-### 待评估
-- [ ] `multi-source-summary` — 跨文档/表格信息聚合（需智能表格 API 成熟后评估）
-- [ ] `meeting-reminder-broadcast` — 会议提醒群发（需消息群发能力）
+### ������
+- [ ] `multi-source-summary` �� ���ĵ�/������Ϣ�ۺϣ������ܱ��� API �����������
+- [ ] `meeting-reminder-broadcast` �� ��������Ⱥ��������ϢȺ��������
 
-## 依赖关系
-- **依赖**：framework（类型、SkillRegistry、Provider 接口）
-- **被依赖**：bot/（各 Bot 通过 config.json 引用组合 Skill 名）
-- 新增组合 Skill → 更新本文件 → 通知受影响 Bot 的 PM
+## ������ϵ
+- **����**��framework�����͡�SkillRegistry��Provider �ӿڣ�
+- **������**��bot/���� Bot ͨ�� config.json ������� Skill ����
+- ������� Skill �� ���±��ļ� �� ֪ͨ��Ӱ�� Bot �� PM
 
-## 开发规范
-- 每个组合 Skill 必须：Input/Output 类型定义 + 参数校验 + 错误回滚
-- 新增 Skill 后必须在本地 pa-bot 验证至少 1 个完整场景
-- 变更后通知 bot PM 更新 skill 列表
+## �����淶
+- ÿ����� Skill ���룺Input/Output ���Ͷ��� + ����У�� + ����ع�
+- ���� Skill ������ڱ��� pa-bot ��֤���� 1 ����������
+- �����֪ͨ bot PM ���� skill �б�
 
 ---
 
-## 最近变更
+## ������
 
-| 日期 | 变更 | 影响 |
+| ���� | ��� | Ӱ�� |
 |------|------|------|
-| 2026-05-27 | PO/PA/PM/PC 四角色体系正式落地 | 所有角色 |
-| 2026-05-27 | 知识同步协议 + prompts 目录 | 所有角色 |
-| 待更新 | — | — |
+| 2026-05-27 | PO/PA/PM/PC �Ľ�ɫ��ϵ��ʽ��� | ���н�ɫ |
+| 2026-05-27 | ֪ʶͬ��Э�� + prompts Ŀ¼ | ���н�ɫ |
+| 2026-05-28 | project-handover ��Ա���� ��� | project-bot |
+| 2026-05-28 | project-registry + project-matrix + project-init����ע��� ��� | project-bot |
+| 2026-05-28 | project-report + cron-scheduler��ǿ(EnhancedCronDeps) + project-init���� ��� | project-bot |
+| 2026-05-28 | meeting-reminder + meeting-minutes��ǿ + create-weekly-report��ǿ ��� | project-bot |
+| 2026-05-28 | cron-scheduler + project-init + project-close ������ɣ��� PA ע�� | project-bot |
+| 2026-05-27 | project-status-report ������ɣ��� PA ע�� | project-bot |
+| ������ | �� | �� |

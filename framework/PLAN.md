@@ -1,4 +1,4 @@
-﻿# Framework 开发计划
+# Framework 开发计划
 
 > 角色：架构负责人 | 边界：[AGENTS.md](AGENTS.md)
 
@@ -14,28 +14,90 @@
 - [x] 类型系统（`types.ts`）
 - [x] Dockerfile + docker-compose（一容器一 Bot）
 - [x] 安全：每 Bot 独立 .env、BOT_NAME 单容器模式
+- [x] 腾讯会议 API 调研 — 已确认：MCP `meeting` CLI 品类已完整覆盖
 
-## 当前任务
+---
 
-### 无紧急变更 — 框架处于稳定期
+## Phase 路线图
 
-如 Bot 开发过程中发现框架缺陷（类型缺失、Provider 接口不足等），架构负责人按需响应。
+| Phase | 主题 | 状态 | 交付物 | 对接 PM |
+|-------|------|------|--------|---------|
+| P1-P3 | 核心框架 | ✅ 已完成 | 长连接/MCP/Agent/Docker | — |
+| **P4** | **Agent 上下文 + 权限体系** | 🔧 当前 | 时间注入/用户识别/RBAC 权限 | PM 开发 Bot 的基础设施 |
+| P5 | CLI/MCP 生态扩展（1期） | 📋 计划中 | 金融数据/网页采集/文档处理 | PM 的新原子 Skill |
+| P6 | CLI/MCP 生态扩展（2期） | 📋 计划中 | 搜索/图表/记忆/知识库 | PM 的新原子 Skill |
+| P7 | 跨平台 Provider | 📋 远期 | API模式/飞书预留 | — |
 
-## 计划中
+---
 
-- [ ] **腾讯会议 API 调研**（优先级：中）
-  - 下载官方 API 文档
-  - 输出对比分析：企微会议 vs 腾讯会议
-  - 决策是否接入
-- [ ] **API 模式 Provider**（优先级：低）
-  - 实现 `ApiProvider` 实现 `Provider` 接口
-  - 支持 HTTP webhook 回调模式（非长连接）
-- [ ] **飞书 Provider 接口预留**（优先级：低）
-  - 不实现具体逻辑，仅预留 `FeishuProvider` 类型和接口
+## P4: Agent ????? + ????
+
+> ??: PM ?? Bot ???????/????/???????
+
+### P4-1: Agent ??????? ?
+- [x] ?????: ?? HandleMessage ??????
+- [x] ?????: userId ?? system prompt
+- [x] ????: ???????????
+
+### P4-2: RBAC ???? ?
+- [x] PermissionMiddleware: Agent tool ?????, ????=???
+- [x] ????: ??:userid ??? + ????????
+- [x] ???: * = ???, doc.* = ?????
+- [x] ??: ?? 10min, ?? 2min
+- [x] Bot ?? _template/config.json ???
+
+### P4-3: ???? + PM ??? ?
+- [x] ??: npx tsx scripts/list-skills.ts [bot-name]
+- [x] PM.md ??????????
+- [x] ????: PermissionConfig/RoleEntry/SheetRoleSource
+
+### P4-4: ContactSync??????
+- [x] ????REST API ??????????????????
+- [x] ?????? + ??:userid ???????
+
+### P4-5: ???? ?
+- [x] pa-bot ????: MCP 42 skills, WS ??
+- [x] contact API ???????
+- [x] ???? 25/25 ??, ??????
+
+
+### P4-6: 全库审计 + 规范升级（2026-05-28）
+- [x] STANDARDS.md 新增 §1.8~1.10（Karpathy 四原则）
+- [x] 全库 Skill 命名统一为 _ 分隔符（party-bot/project-bot config + 文档）
+- [x] cron-scheduler 兼容 _ 分隔符
+- [x] BUGS.md 建立，6 个 Bug 已修复并记录
+- [x] 全量测试 37/37 通过 + 安全扫描通过
+- [x] 分支: ai/architect/p4-fixes，commit: [影响: 所有PM]
+## P4-7: project-bot 9个组合Skill注册（2026-05-28）
+- [x] bot-manager.ts 新增 9 个 import + 9 个注册块（总计 14 个)
+- [x] meeting-minutes 增强 + create-weekly-report 增强
+- [x] meeting-reminder.ts 编码损坏修复，esbuild 编译验证通过
+- [x] 37/37 测试通过 + 安全扫描通过
+- [x] project-bot/config.json 已就绪
+
+P5：CLI/MCP 生态扩展（1期）— 待 P4 完成后讨论
+
+> 方向：金融数据、网页采集、文档处理类 MCP Server，数据源必须权威可靠。
+
+---
+
+## P6：CLI/MCP 生态扩展（2期）— 远期
+
+> 方向：搜索、图表、知识图谱记忆等。
+
+---
+
+## P7：跨平台 Provider — 远期
+
+- [ ] API 模式 Provider（HTTP webhook 回调，非长连接）
+- [ ] 飞书 Provider 接口预留
+
+---
 
 ## 依赖关系
 
 - **被依赖方**：bot/ 和 composite-skills/ 依赖本模块
+- **P4 权限体系**：PM 开发阶段即需要，是最紧迫的基础设施
 - 框架变更会影响所有下游 → 变更前需评估影响范围
 - 新增接口 → 先加类型定义 → 再实现 → 全量回归测试
 
@@ -56,8 +118,13 @@ DEEPSEEK_API_KEY_1=...
 
 ## 最近变更
 
-| 日期 | 变更 | 影响 |
+| 2026-05-28 | Skill命名CamelCase重构: buildSkillName()、去重、全库16文件一致性 | 所有 PM |
+| 2026-05-28 | P4收尾: 6 Bug修复 + 权限体系 + Karpathy规范 + 全库审计 | 所有 PM |
 |------|------|------|
 | 2026-05-27 | PO/PA/PM/PC 四角色体系正式落地 | 所有角色 |
 | 2026-05-27 | 知识同步协议 + prompts 目录 | 所有角色 |
+| 2026-05-27 | 腾讯会议 API 调研关闭 | 所有 PM |
+| 2026-05-27 | Phase 重构：P4=权限体系, P5/P6=CLI扩展, P7=跨平台 | 所有角色 |
+| 2026-05-28 | P4-1~4-3 完成：时间注入+权限体系+技能目录+提示词 | 所有 PM |
+| 2026-05-28 | P4-4 ContactSync 进行中：待 PO 提供 corp 凭据 | 所有 PM |
 | 待更新 | — | — |

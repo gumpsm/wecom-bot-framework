@@ -32,7 +32,7 @@ PO 提需求 → PM 开发 Bot + Skill → 本地测试通过 → PO 验收 → 
 
 1. **需求讨论**（PO + PM/PA）：明确场景、方案、验收标准
 2. **本地开发**（PM）：pa-bot + 本地服务，跑通所有测试
-3. **测试验证**：`npx vitest run` + 集成测试 + 场景测试
+3. **测试验证**：`npx vitest run` + `npx tsx scripts/pre-commit-scan.ts` + 集成测试 + 场景测试
 4. **PO 验收**：在企业微信中实际交互验证效果
 5. **生产部署**（PA）：创建正式 Bot 凭据 → Docker 部署 → 验收
 
@@ -63,5 +63,5 @@ main ← 生产就绪
 ## 安全自检
 
 ```bash
-grep -r "sk-[a-zA-Z0-9]\{20,\}" packages/ scripts/ --include="*.ts" && echo "❌" || echo "✅"
+npx tsx scripts/pre-commit-scan.ts
 ```

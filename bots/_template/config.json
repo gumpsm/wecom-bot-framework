@@ -1,9 +1,21 @@
 {
-  "systemPrompt": "你是一个企业微信智能助手。请用简洁专业的语言回复。如果用户的问题不明确，请主动追问澄清。",
-  "skills": [],
-  "llm": {
-    "model": "deepseek-chat",
-    "temperature": 0.7
-  },
-  "llmProvider": "deepseek"
+  "systemPrompt": "你是 [角色名称]，[一句话描述你的职责]。",
+  "skills": ["skill-a", "skill-b"],
+  
+  "_permissions_说明": "完成技能开发和测试后，按以下方式配置权限（不需要则删除整个 permissions 块）",
+  "_permissions_方式1": "企微通讯录直接映射：格式为 '类型:值'，类型支持 标签、岗位、部门",
+  "_permissions_方式2": "固定角色映射表：让PM/PO提供一张智能表格，格式参见 framework/PLAN.md",
+  "_permissions_方式3": "Bot使用者自行维护：roles中定义角色→技能，使用者提供映射表docid",
+  
+  "permissions": {
+    "roles": {
+      "_说明": "key格式: 标签:值 | 岗位:值 | 部门:值。skills中 * = 全部, doc.* = doc品类全部",
+      "标签:管理员": { "skills": ["*"] },
+      "标签:成员":   { "skills": ["skill-a"] }
+    },
+    "defaultRole": {
+      "skills": []
+    },
+    "denyMessage": "抱歉，您没有权限执行此操作。"
+  }
 }

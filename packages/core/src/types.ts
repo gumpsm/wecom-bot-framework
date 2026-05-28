@@ -7,6 +7,7 @@ export interface ChatMessage {
   tool_calls?: ToolCall[];
   tool_call_id?: string;
   name?: string;
+  reasoning_content?: string;
 }
 
 export interface ToolCall {
@@ -22,6 +23,7 @@ export interface LLMResponse {
   content: string | null;
   toolCalls: ToolCall[];
   finishReason: "stop" | "tool_calls" | "length" | "content_filter";
+  reasoning_content?: string;
 }
 
 export interface StreamDelta {
@@ -148,6 +150,7 @@ export interface BotConfig {
   systemPrompt: string;
   skills: string[];
   llm: LLMConfig;
+  permissions?: PermissionConfig;
 }
 
 export interface LLMConfig {
@@ -175,4 +178,28 @@ export interface Provider {
   uploadMedia(fileBuffer: Buffer, filename: string, type: string): Promise<{ media_id: string }>;
   
   callTool(category: string, method: string, args: Record<string, unknown>): Promise<unknown>;
+}
+
+
+// ====== 权限控制 ======
+
+export interface RoleEntry {
+  skills: string[];
+}
+
+export interface SheetRoleSource {
+  docid: string;
+  sheetName: string;
+  nameColumn: string;
+  deptColumn: string;
+  roleColumn: string;
+}
+
+export interface PermissionConfig {
+  roleSource?: {
+    sheets?: SheetRoleSource[];
+  };
+  roles: Record<string, RoleEntry>;
+  defaultRole?: RoleEntry;
+  denyMessage?: string;
 }

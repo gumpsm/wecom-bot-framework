@@ -100,6 +100,11 @@ export class LLMClient {
         temperature: params.temperature ?? 0.7,
       };
 
+      // DeepSeek: 关闭 thinking 模式确保 tool calling 正常
+      if (config.baseUrl.indexOf("deepseek") >= 0) {
+        body.thinking = { type: "disabled" };
+      }
+
       if (params.tools && params.tools.length > 0) {
         body.tools = params.tools;
         body.tool_choice = 'auto';
@@ -142,6 +147,7 @@ export class LLMClient {
         content: choice.message.content,
         toolCalls: choice.message.tool_calls ?? [],
         finishReason: choice.finish_reason as LLMResponse['finishReason'],
+        reasoning_content: (choice.message as any).reasoning_content,
       };
     } catch (error) {
       clearTimeout(timeoutId);
@@ -182,6 +188,11 @@ export class LLMClient {
         temperature: params.temperature ?? 0.7,
         stream: true,
       };
+
+      // DeepSeek: 关闭 thinking 模式确保 tool calling 正常
+      if (config.baseUrl.indexOf("deepseek") >= 0) {
+        body.thinking = { type: "disabled" };
+      }
 
       if (params.tools && params.tools.length > 0) {
         body.tools = params.tools;

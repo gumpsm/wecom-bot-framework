@@ -1,22 +1,72 @@
 {
-  "systemPrompt": "你是专业的项目管理助手「项目管家」。帮助项目经理高效管理项目：组织会议、撰写周报、整理纪要、跟踪待办。回复简洁务实，以结果为导向。所有创建操作（会议、文档、日程）必须在确认后执行。缺少关键信息时主动追问，不猜测。",
+  "systemPrompt": "你是专业的项目管理助手「项目管家」。\n\n## 可用工具及正确参数\n- todo.create: { subject: \"待办标题\", deadline: \"YYYY-MM-DD HH:MM:SS\" }\n- todo.getList: {} 查所有待办\n- schedule.create: { summary: \"标题\", start_time: \"YYYY-MM-DD HH:MM:SS\", end_time: \"YYYY-MM-DD HH:MM:SS\" }\n- schedule.getListByRange: { start_time: \"YYYY-MM-DD HH:MM:SS\", end_time: \"YYYY-MM-DD HH:MM:SS\" }\n- schedule.checkAvailability: { userid: \"用户ID\", start_time: \"...\", end_time: \"...\" }\n- meeting.create: { title: \"标题\", meeting_start_datetime: \"YYYY-MM-DD HH:MM:SS\", meeting_duration: 秒数, invitees: { userid: [\"userid1\"] } }\n- doc.create: { doc_type: 3(文档)/10(智能表格), doc_name: \"名称\" }\n- doc.getContent: { docid: \"文档ID\" }\n- msg.send: { chat_id: \"群ID\", chat_type: 2(群聊), msg_type: \"text\", content: \"消息\" }\n- organize-meeting: 组合Skill，先检测冲突再创建会议+日程+待办\n- meeting-minutes: 整理会议纪要，可选 planDocId 写入计划表\n- create-weekly-report: 生成周报文档\n\n## 行为规则\n- 时间格式统一用 \"YYYY-MM-DD HH:MM:SS\"，不用 ISO T 格式\n- 用户请求匹配工具能力时直接调用，信息不足追问一次一事\n- 创建操作确认后执行",
   "skills": [
+    "project-handover",
+    "project-matrix",
+    "project-registry",
+    "project-report",
+    "project-status-report",
+    "project-init",
+    "project-close",
+    "cron-scheduler",
+    "meeting-reminder",
     "organize-meeting",
     "create-weekly-report",
     "meeting-minutes",
     "info-gathering",
-    "meeting.create_meeting",
-    "meeting.cancel_meeting",
-    "schedule.create_schedule",
-    "schedule.get_schedule_list_by_range",
-    "todo.create_todo",
-    "doc.create_doc",
-    "doc.edit_doc_content",
-    "doc.get_doc_content"
+    "meeting.create",
+    "meeting.cancel",
+    "meeting.getInfo",
+    "schedule.create",
+    "schedule.cancel",
+    "schedule.getListByRange",
+    "schedule.checkAvailability",
+    "todo.create",
+    "todo.update",
+    "todo.getList",
+    "doc.create",
+    "doc.editContent",
+    "doc.getContent",
+    "doc.smartsheetGetSheet",
+    "doc.smartsheetGetRecords",
+    "doc.smartsheetAddRecords",
+    "doc.smartsheetAddFields",
+    "doc.smartsheetGetFields",
+    "doc.smartsheetUpdateFields",
+    "doc.smartsheetUpdateSheet",
+    "msg.send",
+    "contact.getUserlist"
   ],
   "llm": {
-    "model": "deepseek-chat",
+    "model": "deepseek-v4-pro",
     "temperature": 0.4
   },
-  "llmProvider": "deepseek"
+  "llmProvider": "deepseek",
+  "permissions": {
+    "roles": {
+      "项目经理": {
+        "skills": [
+          "*"
+        ]
+      },
+      "核心成员": {
+        "skills": [
+          "todo.*",
+          "doc.getContent",
+          "schedule.getListByRange",
+          "schedule.checkAvailability",
+          "meeting.getInfo"
+        ]
+      },
+      "干系人": {
+        "skills": [
+          "doc.getContent"
+        ]
+      }
+    },
+    "defaultRole": {
+      "skills": []
+    },
+    "denyMessage": "抱歉，您不在该项目中，无操作权限。请联系项目经理添加。"
+  }
 }
