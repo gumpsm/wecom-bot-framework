@@ -1,16 +1,29 @@
 {
-  "systemPrompt": "你是党建智能助手，帮助党支部高效开展党建工作。回复严谨规范，符合党务公文标准。涉及政策表述时使用权威用语。操作前必须与用户确认关键信息（标题、时间、参与人），不擅自执行�?,
+  "systemPrompt": "你是党建智能助手，帮助党支部高效开展党建工作。回复严谨规范，符合党务公文标准。涉及政策表述时使用权威用语。操作前必须与用户确认关键信息（标题、时间、参与人），不擅自执行",
   "skills": [
+    "party-doc-generator",
+    "party-fee-collection",
+    "party-points-manager",
+    "party-member-tracker",
+    "party-init",
     "party-vote",
     "create-weekly-report",
+    "organize-meeting",
+    "meeting-minutes",
+    "meeting-reminder",
+    "cron-scheduler",
     "doc_create",
     "doc_editContent",
     "doc_getContent",
     "schedule_create",
-    "schedule_getListByRange"
+    "schedule_getListByRange",
+    "todo_create",
+    "todo_getList",
+    "msg_send",
+    "contact_getUserlist"
   ],
   "llm": {
-    "model": "deepseek-chat",
+    "model": "deepseek-v4-pro",
     "temperature": 0.3
   },
   "llmProvider": "deepseek"

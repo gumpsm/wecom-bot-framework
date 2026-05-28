@@ -25,6 +25,11 @@ import { projectMatrixDefinition, runProjectMatrix } from "../../../composite-sk
 import { projectHandoverDefinition, runProjectHandover } from "../../../composite-skills/project-handover";
 import { projectStatusReportDefinition, generateProjectStatusReport, StatusReportInput } from "../../../composite-skills/project-status-report";
 
+import { partyDocGeneratorDefinition, generatePartyDoc, PartyDocInput } from "../../../composite-skills/party-doc-generator";
+import { partyFeeCollectionDefinition, runPartyFeeCollection } from "../../../composite-skills/party-fee-collection";
+import { partyPointsManagerDefinition, runPartyPointsManager } from "../../../composite-skills/party-points-manager";
+import { partyMemberTrackerDefinition, runPartyMemberTracker } from "../../../composite-skills/party-member-tracker";
+import { partyInitDefinition, partyInit } from "../../../composite-skills/party-init";
 interface BotInstance {
   config: BotConfig;
   provider: WeComWsProvider;
@@ -250,7 +255,32 @@ export class BotManager {
     var statusSkill = createCompositeSkill<Record<string, unknown>, any>(projectStatusReportDefinition, async function(args, deps) { return generateProjectStatusReport({ projectName: (args.projectName as string) || "", dateRange: (args.dateRange as string) || "", includeTodos: (args.includeTodos as string) !== "false", includeSchedules: (args.includeSchedules as string) !== "false" }, deps as any); }, depsFactory);
     this.globalSkillRegistry.register(statusSkill);
     console.log("[BotManager] Registered composite: project-status-report");
-    this.compositeSkillsRegistered = true;
+    
+    // 15. Party Doc Generator (?? llm)
+    var partyDocSkill = createCompositeSkill<Record<string, unknown>, any>(partyDocGeneratorDefinition, async function(args, deps) { return generatePartyDoc({ docType: (args.docType as string) || "", collectedInfo: ((args.collectedInfo as string) || "{}") as any }, deps as any); }, depsFactory);
+    this.globalSkillRegistry.register(partyDocSkill);
+    console.log("[BotManager] Registered composite: party-doc-generator");
+
+    // 16. Party Fee Collection
+    var feeSkill = createCompositeSkill<Record<string, unknown>, any>(partyFeeCollectionDefinition, async function(args, deps) { return runPartyFeeCollection({ action: (args.action as string) || "status", members: (args.members as string) || "", chatId: (args.chatId as string) || "", month: (args.month as string) || "", deadline: (args.deadline as string) || "", stateDocId: (args.stateDocId as string) || "", userName: (args.userName as string) || "" }, deps as any); }, depsFactory);
+    this.globalSkillRegistry.register(feeSkill);
+    console.log("[BotManager] Registered composite: party-fee-collection");
+
+    // 17. Party Points Manager
+    var pointsSkill = createCompositeSkill<Record<string, unknown>, any>(partyPointsManagerDefinition, async function(args, deps) { return runPartyPointsManager({ action: (args.action as string) || "ranking", members: (args.members as string) || "", rules: (args.rules as string) || "", sheetDocId: (args.sheetDocId as string) || "", updates: (args.updates as string) || "", name: (args.name as string) || "" }, deps as any); }, depsFactory);
+    this.globalSkillRegistry.register(pointsSkill);
+    console.log("[BotManager] Registered composite: party-points-manager");
+
+    // 18. Party Member Tracker
+    var memberSkill = createCompositeSkill<Record<string, unknown>, any>(partyMemberTrackerDefinition, async function(args, deps) { return runPartyMemberTracker({ action: (args.action as string) || "list", members: (args.members as string) || "", sheetDocId: (args.sheetDocId as string) || "", name: (args.name as string) || "", category: (args.category as string) || "", field: (args.field as string) || "", value: (args.value as string) || "" }, deps as any); }, depsFactory);
+    this.globalSkillRegistry.register(memberSkill);
+    console.log("[BotManager] Registered composite: party-member-tracker");
+
+    // 19. Party Init
+    var pInitSkill = createCompositeSkill<Record<string, unknown>, any>(partyInitDefinition, async function(args, deps) { return partyInit({ feeSheetDocId: (args.feeSheetDocId as string) || "", memberSheetDocId: (args.memberSheetDocId as string) || "", testMode: (args.testMode as string) || "false" }, deps as any); }, depsFactory);
+    this.globalSkillRegistry.register(pInitSkill);
+    console.log("[BotManager] Registered composite: party-init");
+this.compositeSkillsRegistered = true;
   }
 
     private getBotLlmClient(config: BotConfig): LLMClient {
