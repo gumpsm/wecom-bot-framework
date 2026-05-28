@@ -15,6 +15,15 @@ import { organizeMeetingDefinition, organizeMeeting, MeetingInput } from "../../
 import { meetingMinutesDefinition, createMeetingMinutes, MeetingMinutesInput } from "../../../composite-skills/meeting-minutes";
 import { partyVoteDefinition, sendPartyVote, PartyVoteInput } from "../../../composite-skills/party-vote";
 import { infoGatheringDefinition, gatherAndAnalyze, AnalysisRequest } from "../../../composite-skills/info-gathering";
+import { cronSchedulerDefinition, runCronScheduler } from "../../../composite-skills/cron-scheduler";
+import { projectInitDefinition, projectInit, ProjectInitInput } from "../../../composite-skills/project-init";
+import { projectCloseDefinition, projectClose, ProjectCloseInput } from "../../../composite-skills/project-close";
+import { meetingReminderDefinition, setMeetingReminder, ReminderInput } from "../../../composite-skills/meeting-reminder";
+import { projectReportDefinition, runProjectReport, ProjectReportInput } from "../../../composite-skills/project-report";
+import { projectRegistryDefinition, runProjectRegistry } from "../../../composite-skills/project-registry";
+import { projectMatrixDefinition, runProjectMatrix } from "../../../composite-skills/project-matrix";
+import { projectHandoverDefinition, runProjectHandover } from "../../../composite-skills/project-handover";
+import { projectStatusReportDefinition, generateProjectStatusReport, StatusReportInput } from "../../../composite-skills/project-status-report";
 
 interface BotInstance {
   config: BotConfig;
@@ -89,6 +98,9 @@ export class BotManager {
         if ((args as any).members) {
           input.members = ((args as any).members as string).split(/[,，]/).filter(function(s: string) { return s.trim(); });
         }
+        if ((args as any).minutesContent) {
+          input.minutesContent = ((args as any).minutesContent as string) || "";
+        }
         deps.systemPrompt = "你是一个专业的项目周报撰写助手。请保持原有结构和内容，只优化表达。";
         return createWeeklyReport(input, deps);
       },
@@ -130,6 +142,7 @@ export class BotManager {
           rawContent: (args.rawContent as string) || "",
           attendees: attendeesStr ? attendeesStr.split(/[,，]/).filter(function(s: string) { return s.trim(); }) : [],
           template: ((args.template as string) || "standard") as any,
+          planDocId: (args.planDocId as string) || "",
         };
         return createMeetingMinutes(input, deps);
       },
@@ -190,6 +203,51 @@ export class BotManager {
     this.globalSkillRegistry.register(infoSkill);
     console.log("[BotManager] Registered composite: info-gathering");
 
+
+    // 6. Cron Scheduler (???????)
+    var cronSkill = createCompositeSkill<Record<string, unknown>, any>(cronSchedulerDefinition, async function(args, deps) { return runCronScheduler(args as Record<string, unknown>, deps); }, depsFactory);
+    this.globalSkillRegistry.register(cronSkill);
+    console.log("[BotManager] Registered composite: cron-scheduler");
+
+    // 7. Project Init (?? llm)
+    var initSkill = createCompositeSkill<Record<string, unknown>, any>(projectInitDefinition, async function(args, deps) { return projectInit({ projectName: (args.projectName as string) || "", projectCode: (args.projectCode as string) || "", members: (args.members as string) || "", dailyReportTime: (args.dailyReportTime as string) || "", weeklyReportDay: (args.weeklyReportDay as string) || "", meetingDay: (args.meetingDay as string) || "" }, deps as any); }, depsFactory);
+    this.globalSkillRegistry.register(initSkill);
+    console.log("[BotManager] Registered composite: project-init");
+
+    // 8. Project Close (?? llm)
+    var closeSkill = createCompositeSkill<Record<string, unknown>, any>(projectCloseDefinition, async function(args, deps) { return projectClose({ projectName: (args.projectName as string) || "", projectCode: (args.projectCode as string) || "", closeType: ((args.closeType as string) || "normal") as "normal" | "abnormal", reason: (args.reason as string) || "", personnelDocId: (args.personnelDocId as string) || "", planDocId: (args.planDocId as string) || "", configDocId: (args.configDocId as string) || "", chatId: (args.chatId as string) || "" }, deps as any); }, depsFactory);
+    this.globalSkillRegistry.register(closeSkill);
+    console.log("[BotManager] Registered composite: project-close");
+
+    // 9. Meeting Reminder
+    var reminderSkill = createCompositeSkill<Record<string, unknown>, any>(meetingReminderDefinition, async function(args, deps) { return setMeetingReminder({ meetingTitle: (args.meetingTitle as string) || "", meetingTime: (args.meetingTime as string) || "", remindBefore: parseInt((args.remindBefore as string) || "15", 10), chatId: (args.chatId as string) || "", attendees: (args.attendees as string) || "" }, deps); }, depsFactory);
+    this.globalSkillRegistry.register(reminderSkill);
+    console.log("[BotManager] Registered composite: meeting-reminder");
+
+    // 10. Project Report (?? llm)
+    var reportSkill = createCompositeSkill<Record<string, unknown>, any>(projectReportDefinition, async function(args, deps) { return runProjectReport({ reportType: ((args.reportType as string) || "daily") as "daily" | "weekly" | "monthly", projectName: (args.projectName as string) || "", planDocId: (args.planDocId as string) || "", chatId: (args.chatId as string) || "", dateRange: (args.dateRange as string) || "" }, deps as any); }, depsFactory);
+    this.globalSkillRegistry.register(reportSkill);
+    console.log("[BotManager] Registered composite: project-report");
+
+    // 11. Project Registry
+    var registrySkill = createCompositeSkill<Record<string, unknown>, any>(projectRegistryDefinition, async function(args, deps) { return runProjectRegistry(args as Record<string, unknown>, deps); }, depsFactory);
+    this.globalSkillRegistry.register(registrySkill);
+    console.log("[BotManager] Registered composite: project-registry");
+
+    // 12. Project Matrix
+    var matrixSkill = createCompositeSkill<Record<string, unknown>, any>(projectMatrixDefinition, async function(args, deps) { return runProjectMatrix({ viewType: (args.viewType as string) || "overview", personFilter: (args.personFilter as string) || "" }, deps); }, depsFactory);
+    this.globalSkillRegistry.register(matrixSkill);
+    console.log("[BotManager] Registered composite: project-matrix");
+
+    // 13. Project Handover
+    var handoverSkill = createCompositeSkill<Record<string, unknown>, any>(projectHandoverDefinition, async function(args, deps) { return runProjectHandover({ action: (args.action as string) || "preview", personName: (args.personName as string) || "", targetPerson: (args.targetPerson as string) || "", personnelDocId: (args.personnelDocId as string) || "", planDocId: (args.planDocId as string) || "" }, deps); }, depsFactory);
+    this.globalSkillRegistry.register(handoverSkill);
+    console.log("[BotManager] Registered composite: project-handover");
+
+    // 14. Project Status Report (?? llm)
+    var statusSkill = createCompositeSkill<Record<string, unknown>, any>(projectStatusReportDefinition, async function(args, deps) { return generateProjectStatusReport({ projectName: (args.projectName as string) || "", dateRange: (args.dateRange as string) || "", includeTodos: (args.includeTodos as string) !== "false", includeSchedules: (args.includeSchedules as string) !== "false" }, deps as any); }, depsFactory);
+    this.globalSkillRegistry.register(statusSkill);
+    console.log("[BotManager] Registered composite: project-status-report");
     this.compositeSkillsRegistered = true;
   }
 

@@ -1,4 +1,4 @@
-﻿import { SkillDefinition } from "../packages/core/src/types";
+import { SkillDefinition } from "../packages/core/src/types";
 
 export var organizeMeetingDefinition: SkillDefinition = {
   name: "organize-meeting",
@@ -34,6 +34,7 @@ export interface MeetingInput {
 export interface MeetingOutput {
   success: boolean;
   meetingId: string;
+  meetingUrl: string;
   scheduleId: string;
   todoIds: string[];
   message: string;
@@ -99,6 +100,7 @@ export async function organizeMeeting(
   }) as Record<string, unknown>;
 
   var meetingId = meetingResult.meetingid as string;
+  var meetingUrl = (meetingResult.url || meetingResult.meeting_url || meetingResult.meetingUrl || "") as string;
 
   // 5. 创建日程
   var scheduleResult = await deps.callTool("schedule", "create_schedule", {
@@ -165,6 +167,7 @@ export async function organizeMeeting(
   return {
     success: true,
     meetingId: meetingId,
+    meetingUrl: meetingUrl,
     scheduleId: scheduleId,
     todoIds: todoIds,
     message: notifyMsg,
