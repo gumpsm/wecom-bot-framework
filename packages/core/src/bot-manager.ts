@@ -41,8 +41,10 @@ export class BotManager {
   private eventRouter: EventRouter = new EventRouter();
   private compositeSkillsRegistered = false;
   private permissionMiddleware: PermissionMiddleware | null = null;
+  private defaultLlmConfigs: LLMClientConfig[];
 
   constructor(llmConfigs: LLMClientConfig[]) {
+    this.defaultLlmConfigs = llmConfigs;
     this.llmClient = new LLMClient(llmConfigs);
   }
 
@@ -251,6 +253,21 @@ export class BotManager {
     this.compositeSkillsRegistered = true;
   }
 
+    private getBotLlmClient(config: BotConfig): LLMClient {
+    if (config.llm && config.llm.model) {
+      var defaultCfg = this.defaultLlmConfigs[0];
+      var botConfig: LLMClientConfig = {
+        apiKey: config.llm.apiKey || defaultCfg.apiKey,
+        baseUrl: config.llm.baseUrl || defaultCfg.baseUrl,
+        model: config.llm.model,
+        backupApiKeys: config.llm.backupApiKeys || defaultCfg.backupApiKeys,
+      };
+      console.log("[BotManager] Bot " + config.instanceId + " 使用模型: " + config.llm.model);
+      return new LLMClient([botConfig]);
+    }
+    return this.llmClient;
+  }
+
   async startBot(config: BotConfig): Promise<void> {
     console.log("[BotManager] Starting bot: " + config.instanceId);
 
@@ -285,7 +302,7 @@ export class BotManager {
       {
         systemPrompt: config.systemPrompt,
         skillNames: configuredSkills,
-        llmClient: this.llmClient,
+        llmClient: self.getBotLlmClient(config),
         skillRegistry: botSkillRegistry,
         permissionCheck: permMiddleware
           ? async function(skillName: string, userId: string) { return permMiddleware!.check(userId, skillName); }
