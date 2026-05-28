@@ -60,6 +60,14 @@
 - [x] contact API ???????
 - [x] ???? 25/25 ??, ??????
 
+
+### P4-6: 全库审计 + 规范升级（2026-05-28）
+- [x] STANDARDS.md 新增 §1.8~1.10（Karpathy 四原则）
+- [x] 全库 Skill 命名统一为 _ 分隔符（party-bot/project-bot config + 文档）
+- [x] cron-scheduler 兼容 _ 分隔符
+- [x] BUGS.md 建立，6 个 Bug 已修复并记录
+- [x] 全量测试 37/37 通过 + 安全扫描通过
+- [x] 分支: ai/architect/p4-fixes，commit: [影响: 所有PM]
 ## P5：CLI/MCP 生态扩展（1期）— 待 P4 完成后讨论
 
 > 方向：金融数据、网页采集、文档处理类 MCP Server，数据源必须权威可靠。
