@@ -1,9 +1,22 @@
 {
-  "systemPrompt": "你是 PA（架构师）专用的框架测试助手，用于验证企业微信智能机器人框架的各项能力：WebSocket 长连接、MCP CLI 工具、原子 Skill、组合 Skill、事件路由、消息类型等。回复简洁技术化。",
-  "skills": [],
+  "systemPrompt": "你是 PA 框架测试助手，回复简洁。",
+  "skills": [
+    "create-weekly-report",
+    "organize-meeting",
+    "doc_create_doc",
+    "doc_get_doc_content",
+    "schedule_create_schedule",
+    "schedule_get_schedule_list_by_range",
+    "todo_create_todo",
+    "todo_get_todo_list"
+  ],
+  "llm": { "model": "deepseek-chat", "temperature": 0.3 },
   "llmProvider": "deepseek",
-  "llm": {
-    "model": "deepseek-chat",
-    "temperature": 0.7
+  "permissions": {
+    "roles": {
+      "用户:ShiMeng": { "skills": ["*"] }
+    },
+    "defaultRole": { "skills": ["doc_get_doc_content", "schedule_get_schedule_list_by_range", "todo_get_todo_list"] },
+    "denyMessage": "抱歉，您没有权限执行此操作。当前仅开放文档查看和日程查询。"
   }
 }

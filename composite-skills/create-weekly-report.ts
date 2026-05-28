@@ -1,34 +1,33 @@
 import { SkillDefinition } from "../packages/core/src/types";
 
-
 export var weeklyReportDefinition: SkillDefinition = {
   name: "create-weekly-report",
-  description: "´´½¨ÏîÄ¿ÖÜ±¨ÎÄµµ¡£µ±ÓÃ»§Ìáµ½Ğ´ÖÜ±¨¡¢±¾ÖÜ×Ü½á¡¢±¾ÖÜ½øÕ¹¡¢ÏîÄ¿ÖÜ±¨Ê±Ê¹ÓÃ¡£ĞèÒªÊÕ¼¯ÏîÄ¿Ãû³Æ¡¢±¾ÖÜ½øÕ¹ÁĞ±í¡¢ÏÂÖÜ¼Æ»®ÁĞ±í¡£",
+  description: "åˆ›å»ºé¡¹ç›®å‘¨æŠ¥æ–‡æ¡£ã€‚å½“ç”¨æˆ·æåˆ°å†™å‘¨æŠ¥ã€æœ¬å‘¨æ€»ç»“ã€æœ¬å‘¨è¿›å±•ã€é¡¹ç›®å‘¨æŠ¥æ—¶ä½¿ç”¨ã€‚éœ€è¦æ”¶é›†é¡¹ç›®åç§°ã€æœ¬å‘¨è¿›å±•åˆ—è¡¨ã€ä¸‹å‘¨è®¡åˆ’åˆ—è¡¨ã€‚å¯é€‰æ¥æ”¶ä¼šè®®çºªè¦å†…å®¹ä½œä¸ºæ•°æ®æºã€‚",
   parameters: {
     type: "object",
     properties: {
-      projectName: { type: "string", description: "ÏîÄ¿Ãû³Æ" },
-      weekRange: { type: "string", description: "ÖÜÆÚ·¶Î§£¬Èç 2026-05-26 ~ 2026-05-30" },
-      progress: { type: "string", description: "±¾ÖÜ½øÕ¹£¬¶àÌõÓÃ»»ĞĞ·Ö¸ô" },
-      nextPlan: { type: "string", description: "ÏÂÖÜ¼Æ»®£¬¶àÌõÓÃ»»ĞĞ·Ö¸ô" },
-      risks: { type: "string", description: "·çÏÕÃèÊö£¬JSONÊı×é¸ñÊ½£¬¿ÉÑ¡" },
-      members: { type: "string", description: "ÏîÄ¿³ÉÔ±£¬¶ººÅ·Ö¸ô£¬¿ÉÑ¡" },
+      projectName: { type: "string", description: "é¡¹ç›®åç§°" },
+      weekRange: { type: "string", description: "å‘¨æœŸèŒƒå›´ï¼Œå¦‚ 2026-05-26 ~ 2026-05-30" },
+      progress: { type: "string", description: "æœ¬å‘¨è¿›å±•ï¼Œå¤šæ¡ç”¨æ¢è¡Œåˆ†éš”" },
+      nextPlan: { type: "string", description: "ä¸‹å‘¨è®¡åˆ’ï¼Œå¤šæ¡ç”¨æ¢è¡Œåˆ†éš”" },
+      risks: { type: "string", description: "é£é™©æè¿°ï¼ŒJSONæ•°ç»„æ ¼å¼ï¼Œå¯é€‰" },
+      members: { type: "string", description: "é¡¹ç›®æˆå‘˜ï¼Œé€—å·åˆ†éš”ï¼Œå¯é€‰" },
+      minutesContent: { type: "string", description: "ä¼šè®®çºªè¦å†…å®¹ï¼Œå¯é€‰ã€‚æä¾›åLLMä¼šä»çºªè¦ä¸­æå–è¿›å±•å’Œè®¡åˆ’" },
     },
-    required: ["projectName", "weekRange", "progress", "nextPlan"],
+    required: ["projectName", "weekRange"],
   },
 };
 
-// Composite Skill: ÖÜ±¨´´½¨
-// ÊäÈëÏîÄ¿ĞÅÏ¢ ¡ú LLMÉú³ÉÖÜ±¨ÄÚÈİ ¡ú ´´½¨ÎÄµµ ¡ú Ğ´ÈëÄÚÈİ ¡ú ·µ»ØÎÄµµÁ´½Ó
 import { LLMClient, LLMClientConfig } from "./llm-deps";
 
 export interface WeeklyReportInput {
   projectName: string;
-  weekRange: string;           // e.g. "2026-05-26 ~ 2026-06-01"
-  progress: string[];          // ±¾ÖÜ½øÕ¹ÁĞ±í
-  nextPlan: string[];          // ÏÂÖÜ¼Æ»®ÁĞ±í
+  weekRange: string;
+  progress: string[];
+  nextPlan: string[];
   risks?: Array<{ item: string; level: string; solution: string }>;
-  members?: string[];          // ÏîÄ¿³ÉÔ±
+  members?: string[];
+  minutesContent?: string;
 }
 
 export interface WeeklyReportOutput {
@@ -48,75 +47,94 @@ export async function createWeeklyReport(
   input: WeeklyReportInput,
   deps: WeeklyReportDeps
 ): Promise<WeeklyReportOutput> {
-  // 1. ²ÎÊıĞ£Ñé
   var missing: string[] = [];
   if (!input.projectName) missing.push("projectName");
   if (!input.weekRange) missing.push("weekRange");
-  if (!input.progress || input.progress.length === 0) missing.push("progress");
-  if (!input.nextPlan || input.nextPlan.length === 0) missing.push("nextPlan");
   if (missing.length > 0) {
     throw new Error("createWeeklyReport: missing required fields: " + missing.join(", "));
   }
 
-  // 2. ÓÃ LLM Éú³ÉÖÜ±¨ÄÚÈİ
+  // é£é™©
   var riskSection = "";
   if (input.risks && input.risks.length > 0) {
-    riskSection = "\n\n## ·çÏÕÓëÎÊÌâ\n| ·çÏÕ | µÈ¼¶ | Ó¦¶Ô |\n|------|------|------|\n";
+    riskSection = "\n\n## é£é™©ä¸é—®é¢˜\n| é£é™© | ç­‰çº§ | åº”å¯¹ |\n|------|------|------|\n";
     for (var r of input.risks) {
       riskSection += "| " + r.item + " | " + r.level + " | " + r.solution + " |\n";
     }
   }
 
+  // æˆå‘˜
   var memberSection = "";
   if (input.members && input.members.length > 0) {
-    memberSection = "\n\n## ÏîÄ¿³ÉÔ±\n" + input.members.map(function(m: string) { return "- " + m; }).join("\n");
+    memberSection = "\n\n## é¡¹ç›®æˆå‘˜\n" + input.members.map(function(m: string) { return "- " + m; }).join("\n");
   }
 
-  var progressText = input.progress.map(function(p: string) { return "- " + p; }).join("\n");
-  var planText = input.nextPlan.map(function(p: string) { return "- " + p; }).join("\n");
+  // å¦‚æœæä¾›äº†çºªè¦å†…å®¹ï¼Œç”¨ LLM ä»çºªè¦ä¸­æå–è¿›å±•å’Œè®¡åˆ’
+  var progressText = "";
+  var planText = "";
 
-  var rawContent = "# " + input.projectName + " ÖÜ±¨\n\n" +
-    "**ÖÜÆÚ**: " + input.weekRange + "\n\n" +
-    "## ±¾ÖÜ½øÕ¹\n" + progressText + "\n\n" +
-    "## ÏÂÖÜ¼Æ»®\n" + planText +
-    riskSection + memberSection + "\n\n> Éú³ÉÊ±¼ä: " + new Date().toLocaleString();
+  if (input.minutesContent) {
+    // ä»çºªè¦+å·²æœ‰è¿›å±•/è®¡åˆ’ä¸­ç”Ÿæˆå‘¨æŠ¥
+    var existingProgress = input.progress && input.progress.length > 0 ?
+      input.progress.map(function(p: string) { return "- " + p; }).join("\n") : "";
+    var existingPlan = input.nextPlan && input.nextPlan.length > 0 ?
+      input.nextPlan.map(function(p: string) { return "- " + p; }).join("\n") : "";
 
-  // 3. ÓÃ LLM ÈóÉ«£¨Èç¹û systemPrompt Ìá¹©ÁË½ÇÉ«Éè¶¨£©
-  var finalContent = rawContent;
-  if (deps.systemPrompt) {
     try {
-      var response = await deps.llm.chat({
-        messages: [
-          {
-            role: "user",
-            content: "Çë¸ù¾İÒÔÏÂĞÅÏ¢£¬ÕûÀí³ÉÒ»·İ×¨Òµ¸ñÊ½µÄÏîÄ¿ÖÜ±¨£¬±£³ÖÔ­ÓĞ½á¹¹ºÍÄÚÈİ£¬Ö»ÓÅ»¯±í´ï£º" +
-              rawContent
-          }
-        ],
-        systemPrompt: deps.systemPrompt,
-        temperature: 0.5,
+      var llmPrompt = "è¯·æ ¹æ®ä»¥ä¸‹ä¿¡æ¯ç”Ÿæˆé¡¹ç›®å‘¨æŠ¥çš„ã€Œæœ¬å‘¨è¿›å±•ã€å’Œã€Œä¸‹å‘¨è®¡åˆ’ã€ä¸¤ä¸ªç« èŠ‚ï¼ˆMarkdownæ ¼å¼ï¼‰ï¼š\n\n" +
+        "## ä¼šè®®çºªè¦\n" + input.minutesContent + "\n\n" +
+        (existingProgress ? "## å·²æœ‰è¿›å±•è®°å½•\n" + existingProgress + "\n\n" : "") +
+        (existingPlan ? "## å·²æœ‰è®¡åˆ’è®°å½•\n" + existingPlan + "\n\n" : "") +
+        "è¯·åˆå¹¶ä¼šè®®çºªè¦ä¸­çš„ä¿¡æ¯ï¼Œç”Ÿæˆç»“æ„æ¸…æ™°çš„è¿›å±•å’Œè®¡åˆ’ã€‚æ¯é¡¹ä¸€è¡Œï¼Œä»¥ - å¼€å¤´ã€‚åªè¿”å›ä¸¤ä¸ªç« èŠ‚ï¼Œä¸è¦å…¶ä»–å†…å®¹ã€‚";
+
+      var llmResponse = await deps.llm.chat({
+        messages: [{ role: "user", content: llmPrompt }],
+        temperature: 0.3,
       });
-      if (response.content) {
-        finalContent = response.content;
+
+      var llmContent = llmResponse.content || "";
+      // æ‹†åˆ†ä¸ºè¿›å±•å’Œè®¡åˆ’
+      var progressIdx = llmContent.indexOf("æœ¬å‘¨è¿›å±•");
+      var planIdx = llmContent.indexOf("ä¸‹å‘¨è®¡åˆ’");
+      if (progressIdx >= 0 && planIdx > progressIdx) {
+        progressText = llmContent.slice(progressIdx + 6, planIdx).trim();
+        planText = llmContent.slice(planIdx + 6).trim();
+      } else {
+        // fallback: æ•´ä¸ªä½œä¸ºè¿›å±•
+        progressText = existingProgress || llmContent;
+        planText = existingPlan || "";
       }
     } catch (e) {
-      console.warn("[createWeeklyReport] LLM polish failed, using raw content: " + (e as Error).message);
+      console.warn("[createWeeklyReport] LLM extraction failed: " + (e as Error).message);
+      progressText = existingProgress;
+      planText = existingPlan;
     }
+  } else {
+    progressText = input.progress && input.progress.length > 0 ?
+      input.progress.map(function(p: string) { return "- " + p; }).join("\n") : "";
+    planText = input.nextPlan && input.nextPlan.length > 0 ?
+      input.nextPlan.map(function(p: string) { return "- " + p; }).join("\n") : "";
   }
 
-  // 4. ´´½¨ÎÄµµ
+  var rawContent = "# " + input.projectName + " å‘¨æŠ¥\n\n" +
+    "**å‘¨æœŸ**: " + input.weekRange + "\n\n" +
+    "## æœ¬å‘¨è¿›å±•\n" + progressText + "\n\n" +
+    "## ä¸‹å‘¨è®¡åˆ’\n" + planText +
+    riskSection + memberSection + "\n\n> ç”Ÿæˆæ—¶é—´: " + new Date().toLocaleString();
+
+  // åˆ›å»ºæ–‡æ¡£
+  var docName = "å‘¨æŠ¥_" + input.projectName + "_" + input.weekRange.replace(/[\\/:*?"<>|]/g, "-");
   var docResult = await deps.callTool("doc", "create_doc", {
     doc_type: 3,
-    doc_name: input.projectName + " ÖÜ±¨ " + input.weekRange.split("~")[0].trim(),
+    doc_name: docName,
   }) as Record<string, unknown>;
 
   var docId = docResult.docid as string;
   var docUrl = docResult.url as string;
 
-  // 5. Ğ´ÈëÄÚÈİ
   await deps.callTool("doc", "edit_doc_content", {
     content_type: 1,
-    content: finalContent,
+    content: rawContent,
     docid: docId,
   });
 
@@ -124,8 +142,6 @@ export async function createWeeklyReport(
     success: true,
     docUrl: docUrl,
     docId: docId,
-    content: finalContent,
+    content: rawContent,
   };
 }
-
-

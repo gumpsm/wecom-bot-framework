@@ -30,14 +30,14 @@ export class McpSkillProvider {
 
         for (var t of tools) {
           var def: SkillDefinition = {
-            name: cat + "." + t.name,
+            name: cat + "_" + t.name,
             description: t.description || (cat + " " + t.name),
             parameters: this.schemaToParams(t.inputSchema),
           };
 
           var self = this;
-          var category = cat;
-          var method = t.name;
+          const category = cat;
+          const method = t.name;
           var skill: Skill = {
             definition: def,
             execute: function(args: Record<string, unknown>) {

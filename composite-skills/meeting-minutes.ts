@@ -1,8 +1,8 @@
-﻿import { SkillDefinition } from "../packages/core/src/types";
+import { SkillDefinition } from "../packages/core/src/types";
 
 export var meetingMinutesDefinition: SkillDefinition = {
   name: "meeting-minutes",
-  description: "整理会议纪要。接收原始会议内容/录音文本，自动整理为结构化会议纪要文档并提取待办事项。当用户发送会议内容、提到整理纪要、会议记录时使用。",
+  description: "整理会议纪要。接收原始会议内容/录音文本，自动整理为结构化会议纪要文档并提取待办事项。可选将待办写入项目计划表。当用户发送会议内容、提到整理纪要、会议记录时使用。",
   parameters: {
     type: "object",
     properties: {
@@ -11,21 +11,21 @@ export var meetingMinutesDefinition: SkillDefinition = {
       rawContent: { type: "string", description: "原始会议内容或录音转文字" },
       attendees: { type: "string", description: "参会人员，逗号分隔，可选" },
       template: { type: "string", description: "纪要模板: standard/action-items/decision-log，可选", enum: ["standard", "action-items", "decision-log"] },
+      planDocId: { type: "string", description: "项目计划表 docid，传了则自动将提取的待办写入计划表" },
     },
     required: ["meetingTitle", "meetingDate", "rawContent"],
   },
 };
 
-// Composite Skill: 会议纪要整理
-// 输入会议内容/录音文本 → LLM整理为标准纪要 → 创建文档 → 写入内容
 import { LLMClient } from "./llm-deps";
 
 export interface MeetingMinutesInput {
   meetingTitle: string;
-  meetingDate: string;          // "YYYY-MM-DD"
-  attendees: string[];          // 参会人列表
-  rawContent: string;           // 原始会议内容/录音转文字
-  template?: "standard" | "action-items" | "decision-log";  // 纪要模板类型
+  meetingDate: string;
+  attendees: string[];
+  rawContent: string;
+  template?: "standard" | "action-items" | "decision-log";
+  planDocId?: string;
 }
 
 export interface MeetingMinutesOutput {
@@ -34,6 +34,7 @@ export interface MeetingMinutesOutput {
   docId: string;
   content: string;
   actionItems: Array<{ assignee: string; task: string; deadline: string }>;
+  planTaskIds: string[];
 }
 
 export interface MeetingMinutesDeps {
@@ -46,7 +47,6 @@ export async function createMeetingMinutes(
   input: MeetingMinutesInput,
   deps: MeetingMinutesDeps
 ): Promise<MeetingMinutesOutput> {
-  // 1. 参数校验
   var missing: string[] = [];
   if (!input.meetingTitle) missing.push("meetingTitle");
   if (!input.meetingDate) missing.push("meetingDate");
@@ -55,7 +55,6 @@ export async function createMeetingMinutes(
     throw new Error("createMeetingMinutes: missing required fields: " + missing.join(", "));
   }
 
-  // 2. 根据模板类型构造 prompt
   var templateType = input.template || "standard";
   var templateInstruction = "";
 
@@ -72,7 +71,6 @@ export async function createMeetingMinutes(
   var systemPrompt = deps.systemPrompt ||
     "你是一个专业的会议纪要整理助手。请根据原始会议内容，生成结构清晰的会议纪要，使用 Markdown 格式。";
 
-  // 3. LLM 整理纪要
   var response = await deps.llm.chat({
     messages: [
       {
@@ -94,7 +92,7 @@ export async function createMeetingMinutes(
     throw new Error("createMeetingMinutes: LLM returned empty content");
   }
 
-  // 4. 再次调用 LLM 提取待办事项（结构化输出）
+  // 提取待办事项（结构化 JSON）
   var actionItems: Array<{ assignee: string; task: string; deadline: string }> = [];
   try {
     var actionResponse = await deps.llm.chat({
@@ -112,7 +110,6 @@ export async function createMeetingMinutes(
 
     if (actionResponse.content) {
       var jsonStr = actionResponse.content.trim();
-      // 尝试提取 JSON 数组
       var jsonStart = jsonStr.indexOf("[");
       var jsonEnd = jsonStr.lastIndexOf("]");
       if (jsonStart >= 0 && jsonEnd > jsonStart) {
@@ -126,7 +123,7 @@ export async function createMeetingMinutes(
     console.warn("[createMeetingMinutes] Action item extraction failed: " + (e as Error).message);
   }
 
-  // 5. 创建文档
+  // 创建纪要文档
   var docName = "会议纪要_" + input.meetingTitle + "_" + input.meetingDate;
   var docResult = await deps.callTool("doc", "create_doc", {
     doc_type: 3,
@@ -136,12 +133,79 @@ export async function createMeetingMinutes(
   var docId = docResult.docid as string;
   var docUrl = docResult.url as string;
 
-  // 6. 写入内容
   await deps.callTool("doc", "edit_doc_content", {
     content_type: 1,
-    content: finalContent + "\n\n---\n> 本纪要由智能机器人自动生成，原始表单将于 " + input.meetingDate + " 归档。",
+    content: finalContent + "\n\n---\n> 本纪要由 project-bot 自动生成",
     docid: docId,
   });
+
+  // ========== 新增：将待办写入项目计划表 ==========
+  var planTaskIds: string[] = [];
+  if (input.planDocId && actionItems.length > 0) {
+    try {
+      // 获取计划表 sheet
+      var planSheet = await deps.callTool("doc", "smartsheet_get_sheet", { docid: input.planDocId }) as Record<string, unknown>;
+      var planSheetList = (planSheet.sheet_list || []) as Array<Record<string, unknown>>;
+      var planSheetId = planSheetList[0]?.sheet_id as string;
+
+      if (planSheetId) {
+        // 获取已有记录，确定下一个 ID
+        var existingRecords = await deps.callTool("doc", "smartsheet_get_records", {
+          docid: input.planDocId,
+          sheet_id: planSheetId,
+        }) as Record<string, unknown>;
+        var records = (existingRecords.records || []) as Array<Record<string, unknown>>;
+        var maxId = 0;
+        for (var r of records) {
+          var values = (r.values || {}) as Record<string, unknown>;
+          var idVal = extractText(values["ID"]);
+          var numMatch = idVal.match(/T(\d+)/);
+          if (numMatch) {
+            var num = parseInt(numMatch[1], 10);
+            if (num > maxId) maxId = num;
+          }
+        }
+
+        // 逐条写入
+        for (var i = 0; i < actionItems.length; i++) {
+          var item = actionItems[i];
+          maxId++;
+          var taskId = "T" + String(maxId).padStart(3, "0");
+          var today = new Date().toISOString().split("T")[0];
+
+          try {
+            await deps.callTool("doc", "smartsheet_add_records", {
+              docid: input.planDocId,
+              sheet_id: planSheetId,
+              records: [{
+                values: {
+                  "ID": [{ type: "text", text: taskId }],
+                  "类型": [{ type: "text", text: "任务" }],
+                  "名称": [{ type: "text", text: item.task }],
+                  "负责人": [{ type: "text", text: item.assignee }],
+                  "优先级": [{ type: "text", text: "P1" }],
+                  "状态": [{ type: "text", text: "未开始" }],
+                  "开始日期": [{ type: "text", text: today }],
+                  "截止日期": [{ type: "text", text: item.deadline || "" }],
+                  "完成日期": [{ type: "text", text: "" }],
+                  "关联ID": [{ type: "text", text: "" }],
+                  "来源": [{ type: "text", text: "会议纪要" }],
+                  "备注": [{ type: "text", text: "来自: " + input.meetingTitle }],
+                  "创建时间": [{ type: "text", text: today }],
+                  "更新时间": [{ type: "text", text: today }],
+                },
+              }],
+            });
+            planTaskIds.push(taskId);
+          } catch (e) {
+            console.warn("[createMeetingMinutes] Failed to write task " + taskId + ": " + (e as Error).message);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("[createMeetingMinutes] Failed to write action items to plan: " + (e as Error).message);
+    }
+  }
 
   return {
     success: true,
@@ -149,6 +213,18 @@ export async function createMeetingMinutes(
     docId: docId,
     content: finalContent,
     actionItems: actionItems,
+    planTaskIds: planTaskIds,
   };
 }
 
+function extractText(val: unknown): string {
+  if (!val) return "";
+  if (typeof val === "string") return val;
+  if (Array.isArray(val)) {
+    for (var i = 0; i < val.length; i++) {
+      var item = val[i] as Record<string, unknown>;
+      if (item && item.text) return item.text as string;
+    }
+  }
+  return String(val);
+}

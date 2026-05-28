@@ -1,9 +1,10 @@
-﻿import { LLMClient, LLMClientConfig } from "@wecom-bot/llm";
+import { LLMClient, LLMClientConfig } from "@wecom-bot/llm";
 import { SkillRegistry } from "@wecom-bot/skills";
 import { Agent, AgentConfig } from "@wecom-bot/agent";
 import { WeComWsProvider } from "@wecom-bot/providers";
 import { WeComMcpClient } from "../../providers/src/wecom/mcp-client";
 import { McpSkillProvider } from "../../providers/src/wecom/mcp-skill-provider";
+import { PermissionMiddleware } from "./permission-middleware";
 import { EventRouter } from "./event-router";
 import { BotConfig, Skill } from "./types";
 import { createCompositeSkillDepsFactory, createCompositeSkill, CompositeSkillDeps } from "../../skills/src/composite-adapter";
@@ -30,6 +31,7 @@ export class BotManager {
   private mcpSkillProvider: McpSkillProvider | null = null;
   private eventRouter: EventRouter = new EventRouter();
   private compositeSkillsRegistered = false;
+  private permissionMiddleware: PermissionMiddleware | null = null;
 
   constructor(llmConfigs: LLMClientConfig[]) {
     this.llmClient = new LLMClient(llmConfigs);
@@ -49,6 +51,7 @@ export class BotManager {
   getEventRouter(): EventRouter { return this.eventRouter; }
   getMcpClient(): WeComMcpClient | null { return this.mcpClient; }
   getMcpSkillProvider(): McpSkillProvider | null { return this.mcpSkillProvider; }
+  getPermissionMiddleware(): PermissionMiddleware | null { return this.permissionMiddleware; }
 
   registerGlobalSkill(skill: Parameters<SkillRegistry["register"]>[0]): void {
     this.globalSkillRegistry.register(skill);
@@ -211,18 +214,29 @@ export class BotManager {
 
     var configuredSkills = config.skills.length > 0 ? config.skills : globalSkillNames;
 
+    // 初始化权限中间件
+    var self = this;
+    var permMiddleware: PermissionMiddleware | null = null;
+    if (config.permissions && Object.keys(config.permissions.roles).length > 0) {
+      permMiddleware = new PermissionMiddleware(config.permissions, this.mcpClient || undefined);
+      this.permissionMiddleware = permMiddleware;
+      console.log('[BotManager] 权限控制已启用: ' + Object.keys(config.permissions.roles).length + ' 个角色');
+    }
+
     var agent = new Agent(
       {
         systemPrompt: config.systemPrompt,
         skillNames: configuredSkills,
         llmClient: this.llmClient,
         skillRegistry: botSkillRegistry,
+        permissionCheck: permMiddleware
+          ? async function(skillName: string, userId: string) { return permMiddleware!.check(userId, skillName); }
+          : undefined,
       },
       provider
     );
 
     var instance: BotInstance = { config, provider, agent, skillRegistry: botSkillRegistry };
-    var self = this;
 
     provider.onMessage(async function(frame) {
       var chatId = frame.body?.chatid ?? frame.body?.from?.userid ?? "unknown";

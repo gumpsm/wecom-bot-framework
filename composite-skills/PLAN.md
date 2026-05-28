@@ -1,47 +1,63 @@
-ï»¿# Composite Skills å¼€å‘è®¡åˆ’
+# Composite Skills ¿ª·¢¼Æ»®
 
-> è§’è‰²ï¼šSkill ç¼–æ’è€… | è¾¹ç•Œï¼š[AGENTS.md](AGENTS.md)
+> ½ÇÉ«£ºSkill ±àÅÅÕß | ±ß½ç£º[AGENTS.md](AGENTS.md)
 
-## å½“å‰ç‰ˆæœ¬ï¼š5 ä¸ªç»„åˆ Skillï¼ˆç¨³å®šï¼‰
+## µ±Ç°°æ±¾£º5 ¸ö×éºÏ Skill£¨ÎÈ¶¨£©
 
-## å·²å®Œæˆ
-- [x] `create-weekly-report` â€” é¡¹ç›®å‘¨æŠ¥åˆ›å»º
-- [x] `organize-meeting` â€” ä¼šè®®ç»„ç»‡ï¼ˆåˆ›å»ºä¼šè®® + æ—¥ç¨‹ + å¾…åŠï¼‰
-- [x] `meeting-minutes` â€” ä¼šè®®çºªè¦æ•´ç†ï¼ˆæå–å¾…åŠ + åˆ†ç±»ï¼‰
-- [x] `party-vote` â€” å…šå»ºæŠ•ç¥¨æ¨èï¼ˆå¤šé¡¹é€‰æ‹©å¡ç‰‡ + ç»“æœè®°å½•ï¼‰
-- [x] `info-gathering` â€” ä¿¡æ¯æ±‡é›†åˆ†æ
+## ÒÑÍê³É
+- [x] `project-handover` ¡ª ÈËÔ±½»½Ó£¨´ı°ìÔ¤ÀÀ+ÅúÁ¿×ªÒÆ£©
+- [x] `project-registry` ¡ª ÏîÄ¿×¢²á×Ü±í
+- [x] `project-matrix` ¡ª ¶àÏîÄ¿¾ØÕóÊÓÍ¼£¨´ı°ì/ÈËÔ±/Àï³Ì±®£©
+- [x] `project-report` ¡ª ÈÕ±¨/ÖÜ±¨/ÔÂ±¨×Ô¶¯Éú³É
+- [x] `meeting-reminder` ¡ª »áÇ°ÌáĞÑ£¨·â×° cron-scheduler£©
+- [x] `cron-scheduler` ¡ª Í¨ÓÃ¶¨Ê±µ÷¶ÈÆ÷£¨½¨Òé PA Ìáµ½¿ò¼Ü²ã£©
+- [x] `project-init` ¡ª ÏîÄ¿Ò»¼üÆô¶¯
+- [x] `project-close` ¡ª ÏîÄ¿ÖÕÖ¹/½áÏî
+- [x] `create-weekly-report` ¡ª ÏîÄ¿ÖÜ±¨´´½¨
+- [x] `organize-meeting` ¡ª »áÒé×éÖ¯£¨´´½¨»áÒé + ÈÕ³Ì + ´ı°ì£©
+- [x] `meeting-minutes` ÔöÇ¿ ¡ª Ö§³ÖĞ´ÈëÏîÄ¿¼Æ»®±í£¨planDocId£©
+- [x] `create-weekly-report` ÔöÇ¿ ¡ª Ö§³Ö¼ÍÒªÊäÈëÉú³É
+- [x] `meeting-minutes` ¡ª »áÒé¼ÍÒªÕûÀí£¨ÌáÈ¡´ı°ì + ·ÖÀà£©
+- [x] `party-vote` ¡ª µ³½¨Í¶Æ±ÍÆ¼ö£¨¶àÏîÑ¡Ôñ¿¨Æ¬ + ½á¹û¼ÇÂ¼£©
+- [x] `info-gathering` ¡ª ĞÅÏ¢»ã¼¯·ÖÎö
 
-## è®¡åˆ’ä¸­ï¼ˆæŒ‰ä¼˜å…ˆçº§ï¼‰
+## ¼Æ»®ÖĞ£¨°´ÓÅÏÈ¼¶£©
 
-### P4-1: å…šå»ºåœºæ™¯ï¼ˆä¸º party-botï¼‰
-- [ ] `party-news-draft` â€” å…šå»ºæ–°é—»ç¨¿ç”Ÿæˆï¼ˆæ”¶é›†æ´»åŠ¨ä¿¡æ¯ â†’ LLM ç”Ÿæˆ â†’ åˆ›å»ºæ–‡æ¡£ï¼‰
-- [ ] `party-plan-draft` â€” å…šå»ºæ´»åŠ¨æ–¹æ¡ˆç”Ÿæˆ
-- **ä¾èµ–**ï¼š`doc.create_doc`ã€`doc.edit_doc_content`ï¼ˆå·²æœ‰åŸå­ Skillï¼‰
+### P4-1: µ³½¨³¡¾°£¨Îª party-bot£©
+- [ ] `party-news-draft` ¡ª µ³½¨ĞÂÎÅ¸åÉú³É£¨ÊÕ¼¯»î¶¯ĞÅÏ¢ ¡ú LLM Éú³É ¡ú ´´½¨ÎÄµµ£©
+- [ ] `party-plan-draft` ¡ª µ³½¨»î¶¯·½°¸Éú³É
+- **ÒÀÀµ**£º`doc_create_doc`¡¢`doc_edit_doc_content`£¨ÒÑÓĞÔ­×Ó Skill£©
 
-### P4-2: é¡¹ç›®åœºæ™¯ï¼ˆä¸º project-botï¼‰
-- [ ] `project-status-report` â€” é¡¹ç›®çŠ¶æ€æŠ¥å‘Šï¼ˆæ±‡æ€»å¾…åŠ + æ—¥ç¨‹ + æ–‡æ¡£ â†’ ç”ŸæˆæŠ¥å‘Šï¼‰
-- **ä¾èµ–**ï¼š`schedule.get_schedule_list_by_range`ã€`todo.*`ã€`doc.get_doc_content`
+### P4-2: ÏîÄ¿³¡¾°£¨Îª project-bot£©
+- [x] `project-status-report` ¡ª ÏîÄ¿×´Ì¬±¨¸æ£¨»ã×Ü´ı°ì + ÈÕ³Ì + ÎÄµµ ¡ú Éú³É±¨¸æ£©
+- **ÒÀÀµ**£º`schedule_get_schedule_list_by_range`¡¢`todo_*`¡¢`doc_get_doc_content`
 
-### å¾…è¯„ä¼°
-- [ ] `multi-source-summary` â€” è·¨æ–‡æ¡£/è¡¨æ ¼ä¿¡æ¯èšåˆï¼ˆéœ€æ™ºèƒ½è¡¨æ ¼ API æˆç†Ÿåè¯„ä¼°ï¼‰
-- [ ] `meeting-reminder-broadcast` â€” ä¼šè®®æé†’ç¾¤å‘ï¼ˆéœ€æ¶ˆæ¯ç¾¤å‘èƒ½åŠ›ï¼‰
+### ´ıÆÀ¹À
+- [ ] `multi-source-summary` ¡ª ¿çÎÄµµ/±í¸ñĞÅÏ¢¾ÛºÏ£¨ĞèÖÇÄÜ±í¸ñ API ³ÉÊìºóÆÀ¹À£©
+- [ ] `meeting-reminder-broadcast` ¡ª »áÒéÌáĞÑÈº·¢£¨ĞèÏûÏ¢Èº·¢ÄÜÁ¦£©
 
-## ä¾èµ–å…³ç³»
-- **ä¾èµ–**ï¼šframeworkï¼ˆç±»å‹ã€SkillRegistryã€Provider æ¥å£ï¼‰
-- **è¢«ä¾èµ–**ï¼šbot/ï¼ˆå„ Bot é€šè¿‡ config.json å¼•ç”¨ç»„åˆ Skill åï¼‰
-- æ–°å¢ç»„åˆ Skill â†’ æ›´æ–°æœ¬æ–‡ä»¶ â†’ é€šçŸ¥å—å½±å“ Bot çš„ PM
+## ÒÀÀµ¹ØÏµ
+- **ÒÀÀµ**£ºframework£¨ÀàĞÍ¡¢SkillRegistry¡¢Provider ½Ó¿Ú£©
+- **±»ÒÀÀµ**£ºbot/£¨¸÷ Bot Í¨¹ı config.json ÒıÓÃ×éºÏ Skill Ãû£©
+- ĞÂÔö×éºÏ Skill ¡ú ¸üĞÂ±¾ÎÄ¼ş ¡ú Í¨ÖªÊÜÓ°Ïì Bot µÄ PM
 
-## å¼€å‘è§„èŒƒ
-- æ¯ä¸ªç»„åˆ Skill å¿…é¡»ï¼šInput/Output ç±»å‹å®šä¹‰ + å‚æ•°æ ¡éªŒ + é”™è¯¯å›æ»š
-- æ–°å¢ Skill åå¿…é¡»åœ¨æœ¬åœ° pa-bot éªŒè¯è‡³å°‘ 1 ä¸ªå®Œæ•´åœºæ™¯
-- å˜æ›´åé€šçŸ¥ bot PM æ›´æ–° skill åˆ—è¡¨
+## ¿ª·¢¹æ·¶
+- Ã¿¸ö×éºÏ Skill ±ØĞë£ºInput/Output ÀàĞÍ¶¨Òå + ²ÎÊıĞ£Ñé + ´íÎó»Ø¹ö
+- ĞÂÔö Skill ºó±ØĞëÔÚ±¾µØ pa-bot ÑéÖ¤ÖÁÉÙ 1 ¸öÍêÕû³¡¾°
+- ±ä¸üºóÍ¨Öª bot PM ¸üĞÂ skill ÁĞ±í
 
 ---
 
-## æœ€è¿‘å˜æ›´
+## ×î½ü±ä¸ü
 
-| æ—¥æœŸ | å˜æ›´ | å½±å“ |
+| ÈÕÆÚ | ±ä¸ü | Ó°Ïì |
 |------|------|------|
-| 2026-05-27 | PO/PA/PM/PC å››è§’è‰²ä½“ç³»æ­£å¼è½åœ° | æ‰€æœ‰è§’è‰² |
-| 2026-05-27 | çŸ¥è¯†åŒæ­¥åè®® + prompts ç›®å½• | æ‰€æœ‰è§’è‰² |
-| å¾…æ›´æ–° | â€” | â€” |
+| 2026-05-27 | PO/PA/PM/PC ËÄ½ÇÉ«ÌåÏµÕıÊ½ÂäµØ | ËùÓĞ½ÇÉ« |
+| 2026-05-27 | ÖªÊ¶Í¬²½Ğ­Òé + prompts Ä¿Â¼ | ËùÓĞ½ÇÉ« |
+| 2026-05-28 | project-handover ÈËÔ±½»½Ó Íê³É | project-bot |
+| 2026-05-28 | project-registry + project-matrix + project-init¼¯³É×¢²á±í Íê³É | project-bot |
+| 2026-05-28 | project-report + cron-schedulerÔöÇ¿(EnhancedCronDeps) + project-init¼¯³É Íê³É | project-bot |
+| 2026-05-28 | meeting-reminder + meeting-minutesÔöÇ¿ + create-weekly-reportÔöÇ¿ Íê³É | project-bot |
+| 2026-05-28 | cron-scheduler + project-init + project-close ¿ª·¢Íê³É£¬´ı PA ×¢²á | project-bot |
+| 2026-05-27 | project-status-report ¿ª·¢Íê³É£¬´ı PA ×¢²á | project-bot |
+| ´ı¸üĞÂ | ¡ª | ¡ª |

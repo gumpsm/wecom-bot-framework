@@ -1,4 +1,4 @@
-﻿import { LLMClient } from '@wecom-bot/llm';
+import { LLMClient } from '@wecom-bot/llm';
 import { SkillRegistry } from '@wecom-bot/skills';
 import { Provider, ChatMessage, StreamDelta } from '@wecom-bot/core';
 
@@ -7,6 +7,7 @@ export interface AgentConfig {
   skillNames: string[];
   llmClient: LLMClient;
   skillRegistry: SkillRegistry;
+  permissionCheck?: (skillName: string, userId: string) => Promise<{ allowed: boolean; denyMessage?: string }>;
 }
 
 export class Agent {
@@ -19,25 +20,36 @@ export class Agent {
     this.provider = provider;
   }
 
+  // 构建动态 system prompt（注入时间、用户、闲聊规则）
+  private buildSystemPrompt(userId?: string): string {
+    var now = new Date();
+    var weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+    var timeStr = '现在是北京时间 ' + now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日 星期' + weekDays[now.getDay()] + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0') + '。';
+    var userStr = userId ? '\n当前对话用户 userid: ' + userId + '。' : '';
+    var casualRule = '\n你可以简单回应问候和日常寒暄（如"你好""辛苦了""谢谢"），但应自然地将对话引导回你的核心职能。';
+    return timeStr + userStr + '\n' + this.config.systemPrompt + casualRule;
+  }
+
   // 处理用户消息
   async handleMessage(
     chatId: string,
     userMessage: string,
     userId?: string
   ): Promise<string> {
-    const history = this.getHistory(chatId);
+    var history = this.getHistory(chatId);
     history.push({ role: 'user', content: userMessage });
 
-    const tools = this.config.skillRegistry.getDefinitions(
+    var systemPrompt = this.buildSystemPrompt(userId);
+    var tools = this.config.skillRegistry.getDefinitions(
       this.config.skillNames
     );
 
     try {
       // 第一次 LLM 调用：判断意图 + 是否需要工具
-      const response = await this.config.llmClient.chat({
+      var response = await this.config.llmClient.chat({
         messages: history,
         tools,
-        systemPrompt: this.config.systemPrompt,
+        systemPrompt: systemPrompt,
       });
 
       // 如果 LLM 决定调用工具
@@ -47,13 +59,21 @@ export class Agent {
           role: 'assistant',
           content: null,
           tool_calls: response.toolCalls,
+          reasoning_content: response.reasoning_content,
         });
 
         // 执行每个工具调用
-        for (const toolCall of response.toolCalls) {
-          const args = JSON.parse(toolCall.function.arguments);
+        for (var toolCall of response.toolCalls) {
+          var args = JSON.parse(toolCall.function.arguments);
+          if (this.config.permissionCheck) {
+            const perm = await this.config.permissionCheck(toolCall.function.name, userId || "unknown");
+            if (!perm.allowed) {
+              history.push({ role: "tool", tool_call_id: toolCall.id, content: JSON.stringify({ error: perm.denyMessage || "权限不足" }) });
+              continue;
+            }
+          }
           try {
-            const result = await this.config.skillRegistry.execute(
+            var result = await this.config.skillRegistry.execute(
               toolCall.function.name,
               args
             );
@@ -63,6 +83,7 @@ export class Agent {
               content: JSON.stringify(result),
             });
           } catch (err) {
+            console.error("[Agent] Skill "+toolCall.function.name+" failed:",(err as Error).message);
             history.push({
               role: 'tool',
               tool_call_id: toolCall.id,
@@ -74,24 +95,24 @@ export class Agent {
         }
 
         // 第二次 LLM 调用：基于工具结果生成最终回复
-        const finalResponse = await this.config.llmClient.chat({
+        var finalResponse = await this.config.llmClient.chat({
           messages: history,
-          systemPrompt: this.config.systemPrompt,
+          systemPrompt: systemPrompt,
         });
 
-        const reply = finalResponse.content ?? '抱歉，我无法处理这个请求。';
+        var reply = finalResponse.content ?? '抱歉，我无法处理这个请求。';
         history.push({ role: 'assistant', content: reply });
         return reply;
       }
 
       // LLM 直接回复（不需要工具）
-      const reply = response.content ?? '抱歉，我暂时无法回复。';
+      var reply = response.content ?? '抱歉，我暂时无法回复。';
       history.push({ role: 'assistant', content: reply });
       return reply;
 
     } catch (err) {
       console.error('[Agent] 处理消息出错:', err);
-      const errorMsg = '抱歉，服务暂时不可用，请稍后再试。';
+      var errorMsg = '抱歉，服务暂时不可用，请稍后再试。';
       history.push({ role: 'assistant', content: errorMsg });
       return errorMsg;
     }
@@ -100,27 +121,29 @@ export class Agent {
   // 流式处理消息
   async *handleMessageStream(
     chatId: string,
-    userMessage: string
+    userMessage: string,
+    userId?: string
   ): AsyncGenerator<StreamDelta> {
-    const history = this.getHistory(chatId);
+    var history = this.getHistory(chatId);
     history.push({ role: 'user', content: userMessage });
 
-    const tools = this.config.skillRegistry.getDefinitions(
+    var systemPrompt = this.buildSystemPrompt(userId);
+    var tools = this.config.skillRegistry.getDefinitions(
       this.config.skillNames
     );
 
     try {
       // 第一次流式调用
-      let accumulatedContent = '';
-      let toolCalls: Array<{
+      var accumulatedContent = '';
+      var toolCalls: Array<{
         id: string;
         function: { name: string; arguments: string };
       }> = [];
 
-      for await (const delta of this.config.llmClient.streamChat({
+      for await (var delta of this.config.llmClient.streamChat({
         messages: history,
         tools,
-        systemPrompt: this.config.systemPrompt,
+        systemPrompt: systemPrompt,
       })) {
         if (delta.type === 'text' && delta.content) {
           accumulatedContent += delta.content;
@@ -139,17 +162,24 @@ export class Agent {
         history.push({
           role: 'assistant',
           content: accumulatedContent || null,
-          tool_calls: toolCalls.map(tc => ({
+          tool_calls: toolCalls.map(function(tc) { return {
             id: tc.id,
             type: 'function' as const,
             function: tc.function,
-          })),
+          }; }),
         });
 
-        for (const tc of toolCalls) {
-          const args = JSON.parse(tc.function.arguments);
+        for (var tc of toolCalls) {
+          var args = JSON.parse(tc.function.arguments);
+          if (this.config.permissionCheck) {
+            const perm = await this.config.permissionCheck(tc.function.name, userId || "unknown");
+            if (!perm.allowed) {
+              history.push({ role: "tool", tool_call_id: tc.id, content: JSON.stringify({ error: perm.denyMessage || "权限不足" }) });
+              continue;
+            }
+          }
           try {
-            const result = await this.config.skillRegistry.execute(
+            var result = await this.config.skillRegistry.execute(
               tc.function.name,
               args
             );
@@ -168,9 +198,9 @@ export class Agent {
         }
 
         // 第二次流式调用
-        for await (const delta of this.config.llmClient.streamChat({
+        for await (var delta of this.config.llmClient.streamChat({
           messages: history,
-          systemPrompt: this.config.systemPrompt,
+          systemPrompt: systemPrompt,
         })) {
           if (delta.type === 'text' && delta.content) {
             yield delta;
@@ -187,12 +217,12 @@ export class Agent {
     if (!this.conversations.has(chatId)) {
       this.conversations.set(chatId, []);
     }
-    const history = this.conversations.get(chatId)!;
+    var history = this.conversations.get(chatId)!;
 
     // 限制历史长度（保留最近 20 轮）
     if (history.length > 40) {
-      const systemMsg = history.find(m => m.role === 'system');
-      const recentHistory = history.slice(-40);
+      var systemMsg = history.find(function(m) { return m.role === 'system'; });
+      var recentHistory = history.slice(-40);
       if (systemMsg) recentHistory.unshift(systemMsg);
       this.conversations.set(chatId, recentHistory);
     }
