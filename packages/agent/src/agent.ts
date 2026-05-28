@@ -97,12 +97,31 @@ export class Agent {
         }
 
         // 第二次 LLM 调用：基于工具结果生成最终回复
-        var finalResponse = await this.config.llmClient.chat({
-          messages: history,
-          systemPrompt: systemPrompt,
-        });
+        var maxRounds = 3;
+        var finalResponse;
+        for (var round = 0; round < maxRounds; round++) {
+          finalResponse = await this.config.llmClient.chat({
+            messages: history,
+            tools,
+            systemPrompt: systemPrompt,
+          });
+          if (!finalResponse.toolCalls || finalResponse.toolCalls.length === 0) break;
+          history.push({ role: 'assistant', content: null, tool_calls: finalResponse.toolCalls });
+          for (var tc of finalResponse.toolCalls) {
+            var tcArgs = JSON.parse(tc.function.arguments);
+            try {
+              var tcResult = await this.config.skillRegistry.execute(tc.function.name, tcArgs);
+              history.push({ role: 'tool', tool_call_id: tc.id, content: JSON.stringify(tcResult) });
+            } catch (err) {
+              history.push({ role: 'tool', tool_call_id: tc.id, content: JSON.stringify({ error: (err as Error).message }) });
+            }
+          }
+        }
 
         var reply = finalResponse.content ?? '抱歉，我无法处理这个请求。';
+        if (reply.includes('<⚛') || reply.includes('<invoke') || reply.includes('<tool_calls')) {
+          reply = '抱歉，服务暂时不可用，请稍后再试。';
+        }
         history.push({ role: 'assistant', content: reply });
         return reply;
       }

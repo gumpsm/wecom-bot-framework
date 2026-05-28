@@ -25,6 +25,10 @@
 | 2026-05-28 | agent.ts | detailRule 中 skill 名不匹配实际CamelCase命名 | 复合Skill命名重构后schedule_get_list→schedule_getListByRange | 更新 detailRule 中的实际 skill 名 | 所有 PM |
 | 2026-05-28 | agent.ts | DeepSeek 间歇性输出原始 XML (<invoke>)而非结构化 tool_call | 直接回复路径未过滤 | 检测 reply 中的<⚛/<invoke/<tool_calls>，替换为友好提示 | 所有 PM |
 
+已修复
+
+| 2026-05-28 | agent.ts | 日程/待办查询返回原始 XML (<⚛>)，<invoke> 标签直接暴露给用户 | 第二次 LLM 调用未传 tools参数，LLM无法结构化调用getDetail | 第二次调用传入 tools + 多轮循环（最多3轮）, 2处 XML 过滤做安全兜底 | 所有 PM |
+
 待修复
 
 （暂无）
