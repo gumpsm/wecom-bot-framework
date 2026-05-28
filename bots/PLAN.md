@@ -7,8 +7,8 @@
 | Bot | 状态 | 计划文件 | 凭据 | 部署 |
 |-----|------|---------|------|------|
 | pa-bot | ✅ 本地开发测试用 | [PLAN.md](pa-bot/PLAN.md) | 已有 | 本地 |
-| party-bot | 📋 待开发 | [PLAN.md](party-bot/PLAN.md) | 待创建 | 待部署 |
-| project-bot | 📋 待开发 | [PLAN.md](project-bot/PLAN.md) | 待创建 | 待部署 |
+| party-bot | 🔧 开发中    | [PLAN.md](party-bot/PLAN.md) | 待创建 | 待部署 |
+| project-bot | ✅ 技能就绪  | [PLAN.md](project-bot/PLAN.md) | 已有    | 待部署   |
 
 ## 新建 Bot 流程（所有开发者遵守）
 1. `cp -r bots/_template bots/{name}`
@@ -33,4 +33,4 @@
 | 日期 | Bot | 变更 | 影响 |
 |------|-----|------|------|
 | 2026-05-27 | 全部 | 角色体系重构，PM 同时管 Bot 和 composite-skills | 所有 PM |
-| 待更新 | — | — | — |
+| 2026-05-28 | project-bot | 9 组合 Skill 注册完成 | bot: project-bot |

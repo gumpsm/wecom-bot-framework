@@ -68,7 +68,14 @@
 - [x] BUGS.md 建立，6 个 Bug 已修复并记录
 - [x] 全量测试 37/37 通过 + 安全扫描通过
 - [x] 分支: ai/architect/p4-fixes，commit: [影响: 所有PM]
-## P5：CLI/MCP 生态扩展（1期）— 待 P4 完成后讨论
+## P4-7: project-bot 9个组合Skill注册（2026-05-28）
+- [x] bot-manager.ts 新增 9 个 import + 9 个注册块（总计 14 个)
+- [x] meeting-minutes 增强 + create-weekly-report 增强
+- [x] meeting-reminder.ts 编码损坏修复，esbuild 编译验证通过
+- [x] 37/37 测试通过 + 安全扫描通过
+- [x] project-bot/config.json 已就绪
+
+P5：CLI/MCP 生态扩展（1期）— 待 P4 完成后讨论
 
 > 方向：金融数据、网页采集、文档处理类 MCP Server，数据源必须权威可靠。
 
