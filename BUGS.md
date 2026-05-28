@@ -16,6 +16,7 @@
 | 2026-05-28 | mcp-skill-provider.ts | 所有MCP skill被路由到get_msg_media（日程创建/待办查询等全部失败），LLM编造成功回复 | McpSkillProvider闭包变量用var声明，函数作用域导致42个skill全部捕获最后一个category/method(msg/get_msg_media) | var→const（块作用域，每次迭代创建新绑定） | 所有PM |
 | 2026-05-28 | pa-bot config | pa-bot 返回原始 tool call XML 而非人类可读文本 | deepseek-v4-flash 对 tool calling 支持不稳定，输出 tool call 格式文本而非结构化调用 | pa-bot 模型改为 deepseek-chat（与 PM bot 一致） | PA |
 
+| 2026-05-28 | mcp-skill-provider.ts | DeepSeek 合并重复词：schedule_get_schedule_detail → schedulegetschedule_detail，工具调用失败 | Skill 名中品类词和方法名重复，LLM tokenizer 合并 _ 分隔符 | CamelCase 重构：schedule_getDetail（仅1个_，方法内部 CamelCase，去掉重复品类词） | 所有 PM |
 ---
 
 ## 待修复
