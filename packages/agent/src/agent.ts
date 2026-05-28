@@ -27,7 +27,9 @@ export class Agent {
     var timeStr = '现在是北京时间 ' + now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日 星期' + weekDays[now.getDay()] + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0') + '。';
     var userStr = userId ? '\n当前对话用户 userid: ' + userId + '。' : '';
     var casualRule = '\n你可以简单回应问候和日常寒暄（如"你好""辛苦了""谢谢"），但应自然地将对话引导回你的核心职能。';
-    return timeStr + userStr + '\n' + this.config.systemPrompt + casualRule;
+    var noIdRule = '\n重要：永远不要向用户展示原始系统ID（如todo_id、schedule_id、docid、meetingid等长字符串）。用序号或简短标题替代。例如：不要说"日程ID: 4aa82b6c..."，直接说"下午3点 集成测试"。';
+    var detailRule = '\n查询日程时schedule_get_list只返回ID列表，需进一步调用schedule_get_detail（参数schedule_id_list数组）获取标题和时间。查询待办时todo_get_list返回索引不含content，需调用todo_get_detail（参数todo_id_list数组）获取内容。批量传多个ID可减少调用次数。';
+    return timeStr + userStr + '\n' + this.config.systemPrompt + casualRule + noIdRule + detailRule;
   }
 
   // 处理用户消息

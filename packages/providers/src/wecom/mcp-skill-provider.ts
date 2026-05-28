@@ -8,6 +8,19 @@ interface ToolDef {
   inputSchema: Record<string, unknown>;
 }
 
+function buildSkillName(cat: string, method: string): string {
+  // 去掉 method 中重复的品类词（含复数），如 get_schedule_list → get_list
+  var clean = method.replace(new RegExp("(^|_)" + cat + "s?(_|$)", "g"), "$1$2");
+  // 特殊: msg 品类对应 message 语义相同，去掉重复
+  if (cat === "msg") { clean = clean.replace(/_message\b/g, ""); }
+  // 清理多余的 _
+  clean = clean.replace(/^_+|_+$/g, "").replace(/__+/g, "_");
+  if (!clean) clean = cat;
+  // 转 CamelCase
+  var parts = clean.split("_");
+  return cat + "_" + parts.map(function(p, i) { return i === 0 ? p : p.charAt(0).toUpperCase() + p.slice(1); }).join("");
+}
+
 export class McpSkillProvider {
   private client: WeComMcpClient;
   private skills: Map<string, Skill> = new Map();
@@ -29,8 +42,9 @@ export class McpSkillProvider {
         this.toolsByCategory.set(cat, tools);
 
         for (var t of tools) {
+          var skillName = buildSkillName(cat, t.name);
           var def: SkillDefinition = {
-            name: cat + "_" + t.name,
+            name: skillName,
             description: t.description || (cat + " " + t.name),
             parameters: this.schemaToParams(t.inputSchema),
           };

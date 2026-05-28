@@ -46,7 +46,7 @@ async function main() {
   // pa-bot 测试配置
   var testConfig: PermissionConfig = {
     roles: {
-      "标签:党员": { skills: ["doc.get_doc_content"] },
+      "标签:党员": { skills: ["doc_getContent"] },
     },
     defaultRole: { skills: [] },
     denyMessage: "测试拒绝",
@@ -58,10 +58,10 @@ async function main() {
   var firstUserId = String((userList as any[])[0].userid || "");
   console.log("   测试用户: " + firstUserId);
 
-  var r1 = await mw.check(firstUserId, "doc.get_doc_content");
+  var r1 = await mw.check(firstUserId, "doc_getContent");
   console.log("   检查 doc.get_doc_content: " + (r1.allowed ? "✅ 放行" : "❌ 拒绝"));
 
-  var r2 = await mw.check(firstUserId, "todo.create_todo");
+  var r2 = await mw.check(firstUserId, "todo_create");
   console.log("   检查 todo.create_todo: " + (r2.allowed ? "✅ 放行" : "❌ 拒绝（预期）"));
 
   console.log("\n=== 集成测试完成 ===");

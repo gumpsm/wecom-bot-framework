@@ -262,6 +262,15 @@ grep -r "secret\|password\|token" packages/ --include="*.ts" | grep -v "process.
 
 ## 八、禁止事项
 
+### 7.8 Skill 命名规范（LLM 兼容性）
+
+- **规则**：仅 1 个 _ 分隔品类和动作，方法内部 CamelCase，去掉重复的品类词
+- **示例**：schedule_getScheduleListByRange（非 schedule_get_schedule_list_by_range）
+- **原因**：DeepSeek tokenizer 会在重复词/分隔符处合并字符，导致 tool call 名错误
+- **实现**：McpSkillProvider.buildSkillName() 自动从 MCP 方法名生成
+- **MCP 调用不受影响**：内部仍用原始 category.method 格式
+- **通配符权限**：schedule_* 匹配所有 schedule 品类的 skill
+
 - ❌ 猜测 API 参数名或类型
 - ❌ 跳过测试直接交付
 - ❌ 修改其他角色的文件

@@ -1,19 +1,19 @@
-// meeting-reminder �?会前提醒
-// 封装 cron-scheduler，注册一条一次性会议提醒任�?
+// meeting-reminder �?会前提醒
+// 封装 cron-scheduler，注册一条一次性会议提醒任�?
 
 import { SkillDefinition } from "../packages/core/src/types";
 import { addTask, initScheduler, CronTask } from "./cron-scheduler";
 
 export var meetingReminderDefinition: SkillDefinition = {
   name: "meeting-reminder",
-  description: "会前提醒。在会议开始前指定分钟数发送提醒消息到群。自动计算提醒时间并注册�?cron-scheduler�?,
+  description: "会前提醒。在会议开始前指定分钟数发送提醒消息到群。自动计算提醒时间并注册�?cron-scheduler�?,
   parameters: {
     type: "object",
     properties: {
       meetingTitle: { type: "string", description: "会议主题" },
-      meetingTime: { type: "string", description: "会议时间，格�?YYYY-MM-DD HH:MM" },
-      remindBefore: { type: "string", description: "提前多少分钟提醒，默�?15" },
-      chatId: { type: "string", description: "提醒发送的�?chatId" },
+      meetingTime: { type: "string", description: "会议时间，格�?YYYY-MM-DD HH:MM" },
+      remindBefore: { type: "string", description: "提前多少分钟提醒，默�?15" },
+      chatId: { type: "string", description: "提醒发送的�?chatId" },
       attendees: { type: "string", description: "参会人，逗号分隔（提醒消息里@用）" },
     },
     required: ["meetingTitle", "meetingTime"],
@@ -61,13 +61,13 @@ export async function setMeetingReminder(
   if (reminderDate <= now) {
     return {
       success: false,
-      message: "提醒时间已过，不注册提醒任务。会议时�? " + meetingTime + "，提醒时�? " + reminderDate.toLocaleString(),
+      message: "提醒时间已过，不注册提醒任务。会议时�? " + meetingTime + "，提醒时�? " + reminderDate.toLocaleString(),
       taskName: "",
       reminderTime: reminderDate.toLocaleString(),
     };
   }
 
-  // 生成 cron 时间表达�? "MM-DD HH:MM"
+  // 生成 cron 时间表达�? "MM-DD HH:MM"
   var month = String(reminderDate.getMonth() + 1).padStart(2, "0");
   var day = String(reminderDate.getDate()).padStart(2, "0");
   var hour = String(reminderDate.getHours()).padStart(2, "0");
@@ -79,8 +79,8 @@ export async function setMeetingReminder(
   // 构建提醒消息内容
   var attendeeText = attendees ? " @" + attendees.replace(/,/g, " @") : "";
   var notifyText = "📢 会议提醒\n" +
-    "�? + meetingTitle + "」将�?" + meetingTime + " 开始（" + remindBefore + "分钟后）\n" +
-    "参会�?" + (attendees || "全员") + "\n" +
+    "�? + meetingTitle + "」将�?" + meetingTime + " 开始（" + remindBefore + "分钟后）\n" +
+    "参会�?" + (attendees || "全员") + "\n" +
     "请准时参加！";
 
   var task: CronTask = {
@@ -101,7 +101,7 @@ export async function setMeetingReminder(
 
   return {
     success: true,
-    message: "已注册会前提�? " + meetingTitle + " | 提醒时间: " + reminderDate.toLocaleString() + " (提前" + remindBefore + "分钟)",
+    message: "已注册会前提�? " + meetingTitle + " | 提醒时间: " + reminderDate.toLocaleString() + " (提前" + remindBefore + "分钟)",
     taskName: taskName,
     reminderTime: reminderDate.toLocaleString(),
   };

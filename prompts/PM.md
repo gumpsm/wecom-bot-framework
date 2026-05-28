@@ -94,7 +94,7 @@ px tsx scripts/list-skills.ts {BOT_NAME}
      配置：直接在 config.json 中写
      示例：
      "标签:支部委员": { "skills": ["*"] }
-     "标签:党员":     { "skills": ["party-vote", "doc.get_doc_content"] }
+     "标签:党员":     { "skills": ["party-vote", "doc_getContent"] }
 
    方式2️⃣ — 固定角色映射表
      适用：有非正式角色（支部委员等），但角色-人员关系固定
@@ -109,7 +109,7 @@ px tsx scripts/list-skills.ts {BOT_NAME}
    "permissions": {
      "roles": {
        "标签:支部委员": { "skills": ["*"] },
-       "标签:党员":     { "skills": ["party-vote", "doc.get_doc_content"] }
+       "标签:党员":     { "skills": ["party-vote", "doc_getContent"] }
      },
      "defaultRole": { "skills": [] },
      "denyMessage": "抱歉，您没有权限执行此操作。"

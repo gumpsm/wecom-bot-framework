@@ -1,5 +1,5 @@
 {
-  "systemPrompt": "你是专业的项目管理助手「项目管家」。覆盖项目全生命周期：启�?终止、会议（冲突检�?提醒）、纪要→计划表、任务追踪、日�?周报/月报（定时自动）、多项目矩阵视图。回复简洁务实。创建确认后执行，产出物先预览再写入�?,
+  "systemPrompt": "你是专业的项目管理助手「项目管家」。覆盖项目全生命周期：启�?终止、会议（冲突检�?提醒）、纪要→计划表、任务追踪、日�?周报/月报（定时自动）、多项目矩阵视图。回复简洁务实。创建确认后执行，产出物先预览再写入�?,
   "skills": [
     "project-handover",
     "project-matrix",
@@ -14,28 +14,28 @@
     "create-weekly-report",
     "meeting-minutes",
     "info-gathering",
-    "meeting_create_meeting",
-    "meeting_cancel_meeting",
-    "meeting_get_meeting_info",
-    "schedule_create_schedule",
-    "schedule_get_schedule_list_by_range",
-    "schedule_cancel_schedule",
-    "todo_create_todo",
-    "todo_update_todo",
-    "todo_get_todo_list",
-    "doc_create_doc",
-    "doc_edit_doc_content",
-    "doc_get_doc_content",
-    "doc_smartsheet_get_sheet",
-    "doc_smartsheet_get_records",
-    "doc_smartsheet_add_records",
-    "doc_smartsheet_add_fields",
-    "doc_smartsheet_get_fields",
-    "doc_smartsheet_update_fields",
-    "doc_smartsheet_update_sheet",
-    "msg_send_message",
-    "contact_get_userlist",
-    "schedule_check_availability"
+    "meeting_create",
+    "meeting_cancel",
+    "meeting_getInfo",
+    "schedule_create",
+    "schedule_getListByRange",
+    "schedule_cancel",
+    "todo_create",
+    "todo_update",
+    "todo_getList",
+    "doc_create",
+    "doc_editContent",
+    "doc_getContent",
+    "doc_smartsheetGetSheet",
+    "doc_smartsheetGetRecords",
+    "doc_smartsheetAddRecords",
+    "doc_smartsheetAddFields",
+    "doc_smartsheetGetFields",
+    "doc_smartsheetUpdateFields",
+    "doc_smartsheetUpdateSheet",
+    "msg_send",
+    "contact_getUserlist",
+    "schedule_checkAvailability"
   ],
   "llm": {
     "model": "deepseek-chat",
@@ -52,23 +52,23 @@
       "核心成员": {
         "skills": [
           "todo.*",
-          "doc_get_doc_content",
-          "schedule_get_schedule_list_by_range",
-          "schedule_check_availability",
-          "meeting_get_meeting_info",
+          "doc_getContent",
+          "schedule_getListByRange",
+          "schedule_checkAvailability",
+          "meeting_getInfo",
           "project-init",
           "project-close"
         ]
       },
-      "干系�?: {
+      "干系�?: {
         "skills": [
-          "doc_get_doc_content"
+          "doc_getContent"
         ]
       }
     },
     "defaultRole": {
       "skills": []
     },
-    "denyMessage": "抱歉，您不在该项目中，无操作权限。请联系项目经理添加�?
+    "denyMessage": "抱歉，您不在该项目中，无操作权限。请联系项目经理添加�?
   }
 }

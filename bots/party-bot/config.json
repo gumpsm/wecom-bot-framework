@@ -1,13 +1,13 @@
 {
-  "systemPrompt": "你是党建智能助手，帮助党支部高效开展党建工作。回复严谨规范，符合党务公文标准。涉及政策表述时使用权威用语。操作前必须与用户确认关键信息（标题、时间、参与人），不擅自执行�?,
+  "systemPrompt": "你是党建智能助手，帮助党支部高效开展党建工作。回复严谨规范，符合党务公文标准。涉及政策表述时使用权威用语。操作前必须与用户确认关键信息（标题、时间、参与人），不擅自执行�?,
   "skills": [
     "party-vote",
     "create-weekly-report",
-    "doc_create_doc",
-    "doc_edit_doc_content",
-    "doc_get_doc_content",
-    "schedule_create_schedule",
-    "schedule_get_schedule_list_by_range"
+    "doc_create",
+    "doc_editContent",
+    "doc_getContent",
+    "schedule_create",
+    "schedule_getListByRange"
   ],
   "llm": {
     "model": "deepseek-chat",
