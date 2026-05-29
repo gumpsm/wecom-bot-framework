@@ -23,14 +23,14 @@
 
 ## 当前版本
 
-**v0.4.3** — 框架就绪， P4 完成， 14 组合 Skill
+**v0.4.4** — 框架就绪， P4 完成， 14 组合 Skill
 
 ## 当前 Phase：P4 — 正式 Bot 开发（party-bot / project-bot）
 
 | 模块 | 状态 | 负责角色 | 计划文件 |
 |------|------|---------|---------|
 | framework | ✅ 稳定 | PA | [framework/PLAN.md](framework/PLAN.md) |
-| composite-skills | ✅ 14 个完成 | PM | [composite-skills/PLAN.md](composite-skills/PLAN.md) |
+| composite-skills | ✅ 19 个完成 | PM | [composite-skills/PLAN.md](composite-skills/PLAN.md) |
 | bot: pa-bot | ✅ PA 框架测试 | PM | [bots/pa-bot/PLAN.md](bots/pa-bot/PLAN.md) |
 | bot: party-bot | ✅ 技能就绪       | PM | [bots/party-bot/PLAN.md](bots/party-bot/PLAN.md) |
 | bot: project-bot | 🔧 开发中 | PM | [bots/project-bot/PLAN.md](bots/project-bot/PLAN.md) |
@@ -79,6 +79,7 @@ PO 提需求
 | v0.4.0 | 2026-05-27 | 安全改造 + Docker 部署 + 开发流程规范 + 角色体系 |
 | v0.4.2 | 2026-05-28 | Skill命名CamelCase重构 + 去重 + Karpathy规范 + 全库一致性 |
 | v0.4.3 | 2026-05-28 | P4-7: project-bot 9组合Skill注册 + 14组合Skill就绪 |
+| v0.4.4 | 2026-05-29 | party-bot 5组合Skill注册 + 多轮工具循环修复 + smartsheet 技能补全 | | P4-7: project-bot 9组合Skill注册 + 14组合Skill就绪 |
 | v0.4.1 | 2026-05-28 | P4 完成：权限体系 + 时间注入 + 全库Skill命名统一 + Karpathy规范 + 6 Bug修复 |
 
 ## 项目实时数据

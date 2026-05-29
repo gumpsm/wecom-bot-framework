@@ -75,6 +75,11 @@
 - [x] 37/37 测试通过 + 安全扫描通过
 - [x] project-bot/config.json 已就绪
 
+P4-8: party-bot 5个组合Skill注册（2026-05-29）
+- [x] party-doc-generator / party-fee-collection / party-points-manager / party-member-tracker / party-init
+- [x] 注册后总计 19 个 Registered composite
+- [x] 37/37 测试通过 + 安全扫描通过
+
 P5：CLI/MCP 生态扩展（1期）— 待 P4 完成后讨论
 
 > 方向：金融数据、网页采集、文档处理类 MCP Server，数据源必须权威可靠。
